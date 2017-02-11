@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git+https://github.com/leonardosnt/jar-string-editor.git"
   },
+  "scripts": {
+    "devbuild": "./node_modules/.bin/webpack",
+    "prodbuild": "./node_modules/.bin/webpack -p"
+  },
   "author": "leonardosnt",
   "license": "GPL-2.0",
   "dependencies": {
