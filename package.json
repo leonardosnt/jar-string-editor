@@ -8,7 +8,7 @@
     "url": "git+https://github.com/leonardosnt/jar-string-editor.git"
   },
   "scripts": {
-    "build": "./node_modules/.bin/webpack & ./node_modules/.bin/uglifyjs -o dist/bundle.min.js dist/bundle.js"
+    "build": "./node_modules/.bin/webpack && ./node_modules/.bin/uglifyjs -o dist/bundle.min.js dist/bundle.js"
   },
   "author": "leonardosnt",
   "license": "GPL-2.0",
