@@ -87,6 +87,10 @@ $(function() {
     const textDecoder = new TextDecoder('utf-8');
     const file = e.target.files[0];
 
+    if (file === undefined) {
+      return;
+    }
+
     id = 0;
     stringMap = {};
     classFileMap = {};
@@ -125,15 +129,18 @@ $(function() {
               constantPoolIndex: cpEntry.string_index
             };
 
-            entryContainer.setAttribute('data-id', id++);
+            entryContainer.setAttribute('data-id', id);
             entryContainer.className = 'input-field';
             inputLabel.innerText = strValue;
+            inputLabel.setAttribute('for', `input-id-${id}`);
             input.type = 'text';
+            input.id = `input-id-${id}`;
             
             entryContainer.appendChild(inputLabel);
             entryContainer.appendChild(input);
 
             $stringList.append(entryContainer);
+            ++id;
           });
       })
     }
@@ -156,12 +163,6 @@ $(function() {
         });
     };
 
-    if (file !== undefined) {
-      /*if (file.type !== 'application/x-java-archive') {
-        alert('Você precisa selecionar um arquivo ".jar"');
-      } else {*/
-        reader.readAsArrayBuffer(file);
-      /*}*/ //TODO: does not work on windows '-'
-    }
+    reader.readAsArrayBuffer(file);
   })
 });
