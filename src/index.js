@@ -155,11 +155,11 @@ $(function() {
     };
 
     if (file !== undefined) {
-      if (file.type !== 'application/x-java-archive') {
+      /*if (file.type !== 'application/x-java-archive') {
         alert('Você precisa selecionar um arquivo ".jar"');
-      } else {
+      } else {*/
         reader.readAsArrayBuffer(file);
-      }
+      /*}*/ //TODO: does not work on windows '-'
     }
   })
 });
