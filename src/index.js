@@ -95,6 +95,7 @@ $(function() {
     stringMap = {};
     classFileMap = {};
     fileName = file.name;
+    $stringList.empty();
 
     function parseClassContents(file) {
       const classFile = jclassReader.read(file.data);
