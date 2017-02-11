@@ -4,6 +4,8 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { saveAs } from 'file-saver';
 
 $(function() {
+  const $stringList = $('#string-list');
+  
   /**
    * Save information about each string.
    * 
@@ -38,7 +40,7 @@ $(function() {
       const textEncoder = new TextEncoder('utf-8');
       const writer = new JavaClassFileWriter();
 
-      $('#string-list')
+      $stringList
         .children('.input-field')
         .filter((idx, ele) => $(ele).children('input').val() !== '')
         .map((idx, ele) => {
