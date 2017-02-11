@@ -10,9 +10,10 @@ gulp.task('default', () => {
 });
 
 gulp.task('build', () => {
-  return gulp.src('src/**')
+  return gulp.src('src/*.js')
     .pipe(webpack(require('./webpack.config')))
-    .pipe(gulp.dest(__dirname + './dist'))
+    .pipe(gulp.dest(__dirname + './dist/'))
     .pipe(rename(path => path.extname = ".min.js"))
     .pipe(uglifyjs())
+    .pipe(gulp.dest(__dirname + './dist/'))
 });
