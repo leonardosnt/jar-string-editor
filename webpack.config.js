@@ -1,14 +1,30 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js'
+    filename: 'dist/app.js'
   },
   node: {
     fs: 'empty',
     process: false
   },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendors',
+      filename: "dist/vendors.js",
+      minChunks: function (module) {
+        var userRequest = module.userRequest;
+
+        if (typeof userRequest !== 'string') {
+          return false;
+        }
+
+        return userRequest.indexOf('node_modules') > -1;
+      }
+    })
+  ],
   module: {
     loaders: [{
       test: /\.js$/,
@@ -20,3 +36,8 @@ module.exports = {
     }]
   }
 };
+
+// Production build
+if (process.argv.indexOf('-p') !== -1) {
+  module.exports.plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false }}))
+}
