@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>foo</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+  </head>
+  <body>
+   <div class="container">
+    <div class="row">
+      <h5 id="status-label">Selecione o arquivo (.jar)</h5>
+      <h6>Isso será executado no seu browser, tente não escolher arquivos muito grandes.</h6>
+    </div>
+    
+    <div class="row">
+      <input type="file" id="file-input" name="file" style="display: none;" />
+      <button id="select-file" type="file" class="waves-effect waves-light btn">Selecionar</button>
+      <button id="save-file" class="waves-effect waves-light btn">Salvar</button>
+    </div>
+
+    <div id="string-list" class="row" style="margin-top: 30px;"></div>
+   </div>
+  </body>
+  <script src="../dist/bundle.min.js"></script>
+</html>
