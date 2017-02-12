@@ -99,6 +99,7 @@ $(function() {
 
     function parseClassContents(file) {
       const classFile = jclassReader.read(file.data);
+      const elements = [];
 
       classFileMap[file.name] = classFile;
       
@@ -108,7 +109,7 @@ $(function() {
           return attrName === "Code";
         })[0];
 
-        if (codeAttr === undefined) return;
+        if (codeAttr === undefined || codeAttr.length == 0) return;
         const instructions = InstructionParser.fromBytecode(codeAttr.code);
         
         instructions
@@ -140,24 +141,30 @@ $(function() {
             entryContainer.appendChild(inputLabel);
             entryContainer.appendChild(input);
 
-            $stringList.append(entryContainer);
+            elements.push(entryContainer);
             ++id;
           });
       })
+
+      if (elements.length == 0) return;
+
+      $stringList.append(elements);
     }
 
     reader.onload = (e) => {
       const data = e.target.result;
+
       new JSZip()
         .loadAsync(data)
         .then(zip => {
           zip
             .filter(f => f.endsWith('.class'))
             .forEach(f => {
-              f.async('arraybuffer').then(data => parseClassContents({
-                name: f.name,
-                data: data
-              }));
+              f.async('arraybuffer')
+                .then(data => parseClassContents({
+                  name: f.name,
+                  data: data
+                }));
             });
 
           jarFile = zip;
