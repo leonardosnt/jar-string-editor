@@ -113,9 +113,14 @@ $(function() {
         const instructions = InstructionParser.fromBytecode(codeAttr.code);
         
         instructions
-          .filter(i => i.opcode == Opcode.LDC)
+          .filter(i => i.opcode == Opcode.LDC || i.opcode == Opcode.LDC_W)
           .forEach(i => {
-            const cpEntry = classFile.constant_pool[i.operands[0]];
+            const cpIndex = i.opcode == Opcode.LDC
+              ? i.operands[0]
+              : (i.operands[0] << 8) | i.operands[1];
+
+            const cpEntry = classFile.constant_pool[cpIndex];
+
             if (cpEntry.tag !== ConstantType.STRING) return;
 
             const strEntry = classFile.constant_pool[cpEntry.string_index];
