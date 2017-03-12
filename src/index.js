@@ -18,12 +18,12 @@
 
 import { JavaClassFileWriter, JavaClassFileReader, Opcode, ConstantType, InstructionParser } from 'java-class-tools';
 import JSZip from 'jszip';
-import { TextDecoder, TextEncoder } from 'text-encoding';
+import { stringToUtf8ByteArray, utf8ByteArrayToString } from './crypt';
 import { saveAs } from 'file-saver';
 
-$(function() {
+$(function () {
   const $stringList = $('#string-list');
-  
+
   /**
    * Save information about each string.
    * 
@@ -50,12 +50,11 @@ $(function() {
   let fileName = undefined;
   let jarFile = undefined;
   let id = 0;
-  
+
   $('#save-file').click(e => {
     if (jarFile === undefined) {
       alert("Não ha nada para salvar.");
     } else {
-      const textEncoder = new TextEncoder('utf-8');
       const writer = new JavaClassFileWriter();
 
       $stringList
@@ -69,7 +68,7 @@ $(function() {
           const classFile = classFileMap[strMapValue.ownerClass];
 
           const cpEntry = classFile.constant_pool[strMapValue.constantPoolIndex];
-          const encodedStr = textEncoder.encode(inputVal);
+          const encodedStr = stringToUtf8ByteArray(inputVal);
 
           cpEntry.length = encodedStr.length;
           cpEntry.bytes = [];
@@ -89,7 +88,7 @@ $(function() {
 
       // Save modified file
       jarFile.generateAsync({ type: 'blob' })
-        .then(function (blob) { 
+        .then(function (blob) {
           saveAs(blob, fileName || "translated.jar");
         });
     }
@@ -102,7 +101,6 @@ $(function() {
   $('#file-input').change(e => {
     const reader = new FileReader();
     const jclassReader = new JavaClassFileReader();
-    const textDecoder = new TextDecoder('utf-8');
     const file = e.target.files[0];
 
     if (file === undefined) {
@@ -120,7 +118,7 @@ $(function() {
       const elements = [];
 
       classFileMap[file.name] = classFile;
-      
+
       classFile.methods.forEach(md => {
         const codeAttr = md.attributes.filter(attr => {
           const attrName = String.fromCharCode.apply(null, classFile.constant_pool[attr.attribute_name_index].bytes);
@@ -129,7 +127,7 @@ $(function() {
 
         if (codeAttr === undefined || codeAttr.length == 0) return;
         const instructions = InstructionParser.fromBytecode(codeAttr.code);
-        
+
         instructions
           .filter(i => i.opcode == Opcode.LDC || i.opcode == Opcode.LDC_W)
           .forEach(i => {
@@ -142,7 +140,7 @@ $(function() {
             if (cpEntry.tag !== ConstantType.STRING) return;
 
             const strEntry = classFile.constant_pool[cpEntry.string_index];
-            const strValue = textDecoder.decode(new Uint8Array(strEntry.bytes));
+            const strValue = utf8ByteArrayToString(strEntry.bytes);
 
             // Append element
             const entryContainer = document.createElement('div');
@@ -160,7 +158,7 @@ $(function() {
             inputLabel.setAttribute('for', `input-id-${id}`);
             input.type = 'text';
             input.id = `input-id-${id}`;
-            
+
             entryContainer.appendChild(inputLabel);
             entryContainer.appendChild(input);
 
@@ -197,3 +195,4 @@ $(function() {
     reader.readAsArrayBuffer(file);
   })
 });
+
