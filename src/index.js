@@ -87,7 +87,7 @@ $(function () {
         });
 
       // Save modified file
-      jarFile.generateAsync({ type: 'blob' })
+      jarFile.generateAsync({ type: 'blob', compression: 'DEFLATE' })
         .then(function (blob) {
           saveAs(blob, fileName || "translated.jar");
         });
