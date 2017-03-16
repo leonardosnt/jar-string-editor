@@ -9,7 +9,8 @@
   },
   "scripts": {
     "devbuild": "./node_modules/.bin/webpack",
-    "prodbuild": "./node_modules/.bin/webpack -p"
+    "prodbuild": "./node_modules/.bin/webpack -p",
+    "watch": "./node_modules/.bin/webpack --watch"
   },
   "author": "leonardosnt",
   "license": "GPL-2.0",
