@@ -1710,9 +1710,9 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
-java-class-tools@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/java-class-tools/-/java-class-tools-1.0.6.tgz#a66dfb09a0affb88dbdab0157f390e78637cc576"
+java-class-tools@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/java-class-tools/-/java-class-tools-1.1.1.tgz#eb4b35003dc72bf7cb7f6879ddc6c08a579cf9a5"
   dependencies:
     bytebuffer "^5.0.1"
 
@@ -2844,10 +2844,6 @@ tar@~2.2.1:
     block-stream "*"
     fstream "^1.0.2"
     inherits "2"
-
-text-encoding@^0.6.4:
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
 
 through2@^0.6.1:
   version "0.6.5"
