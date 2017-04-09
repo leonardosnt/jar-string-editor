@@ -16,7 +16,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { JavaClassFileWriter, JavaClassFileReader, Opcode, ConstantType, InstructionParser } from 'java-class-tools';
+import { JavaClassFileWriter, JavaClassFileReader, Opcode, ConstantType, InstructionParser, Modifier } from 'java-class-tools';
 import JSZip from 'jszip';
 import { stringToUtf8ByteArray, utf8ByteArrayToString } from './crypt';
 import { saveAs } from 'file-saver';
@@ -37,60 +37,63 @@ $(function () {
    */
   let stringMap = {};
 
-  /**
-   * Maps className to ClassFile object.
-   * 
-   * {
-   *   className: ClassFile,
-   *   ...
-   * }
-   */
-  let classFileMap = {};
-
   let fileName = undefined;
+
+  // JSZip instance
   let jarFile = undefined;
-  let id = 0;
+
+  // Unique id for each string
+  let stringId = 0;
 
   $('#save-file').click(e => {
     if (jarFile === undefined) {
       alert("Não ha nada para salvar.");
     } else {
       const writer = new JavaClassFileWriter();
+      const reader = new JavaClassFileReader();
+      
+      // ZipObject#async's promises
+      const promises = [];
 
       $stringList
         .children('.input-field')
         .filter((idx, ele) => $(ele).children('input').val() !== '')
         .map((idx, ele) => {
-          const $ele = $(ele);
-          const inputVal = $ele.find('input').val();
-          const strMapIndex = $ele.attr('data-id');
+          const $element = $(ele);
+
+          // Changed string
+          const inputValue = $element.find('input').val();
+          const strMapIndex = $element.attr('data-id');
           const strMapValue = stringMap[strMapIndex];
-          const classFile = classFileMap[strMapValue.ownerClass];
 
-          const cpEntry = classFile.constant_pool[strMapValue.constantPoolIndex];
-          const encodedStr = stringToUtf8ByteArray(inputVal);
+          const promise = jarFile.file(strMapValue.ownerClass).async('arraybuffer');
+          
+          promise.then(data => {
+            const classFile = reader.read(data);
 
-          cpEntry.length = encodedStr.length;
-          cpEntry.bytes = [];
+            const utf8Constant = classFile.constant_pool[strMapValue.constantPoolIndex];
+            const stringBytes = stringToUtf8ByteArray(inputValue.replace('\\n', '\n'));
 
-          // Copy bytes from ArrayBuffer to Array
-          encodedStr.forEach(b => cpEntry.bytes.push(b));
+            utf8Constant.length = stringBytes.length;
+            utf8Constant.bytes = [];
 
-          return {
-            className: strMapValue.ownerClass,
-            classFile: classFile
-          };
-        })
-        .each((idx, val) => {
-          const classFileBuf = writer.write(val.classFile);
-          jarFile.file(val.className, classFileBuf.buffer);
+            // Copy bytes from ArrayBuffer to Array
+            stringBytes.forEach(b => utf8Constant.bytes.push(b));
+
+            // Write modified ClassFile
+            const classFileBuf = writer.write(classFile);
+            jarFile.file(strMapValue.ownerClass, classFileBuf.buffer);
+          });
+
+          promises.push(promise);
         });
 
-      // Save modified file
-      jarFile.generateAsync({ type: 'blob', compression: 'DEFLATE' })
-        .then(function (blob) {
+      // Wait all ZipObject#async's promises
+      Promise.all(promises)
+        .then(() => jarFile.generateAsync({ type: 'blob', compression: 'DEFLATE' }))
+        .then(blob => {
           saveAs(blob, fileName || "translated.jar");
-        });
+        })
     }
   })
 
@@ -107,69 +110,74 @@ $(function () {
       return;
     }
 
-    id = 0;
+    // Reset stuff
+    stringId = 0;
     stringMap = {};
-    classFileMap = {};
     fileName = file.name;
     $stringList.empty();
 
-    function parseClassContents(file) {
+    function readStrings (file) {
       const classFile = jclassReader.read(file.data);
       const elements = [];
 
-      classFileMap[file.name] = classFile;
-
-      classFile.methods.forEach(md => {
-        const codeAttr = md.attributes.filter(attr => {
-          const attrName = String.fromCharCode.apply(null, classFile.constant_pool[attr.attribute_name_index].bytes);
-          return attrName === "Code";
+      classFile.methods.filter(md => (md.access_flags & Modifier.ABSTRACT) === 0).forEach(method => {
+        const codeAttribute = method.attributes.filter(attr => {
+          const attributeNameBytes = classFile.constant_pool[attr.attribute_name_index].bytes;
+          return attributeNameBytes.length === 4 && String.fromCharCode.apply(null, attributeNameBytes) === "Code";
         })[0];
 
-        if (codeAttr === undefined || codeAttr.length == 0) return;
-        const instructions = InstructionParser.fromBytecode(codeAttr.code);
+        if (codeAttribute === undefined || codeAttribute.length == 0) {
+          return;
+        }
+
+        const instructions = InstructionParser.fromBytecode(codeAttribute.code);
 
         instructions
           .filter(i => i.opcode == Opcode.LDC || i.opcode == Opcode.LDC_W)
           .forEach(i => {
-            const cpIndex = i.opcode == Opcode.LDC
+            const constantIndex = i.opcode == Opcode.LDC
               ? i.operands[0]
               : (i.operands[0] << 8) | i.operands[1];
 
-            const cpEntry = classFile.constant_pool[cpIndex];
+            const constantEntry = classFile.constant_pool[constantIndex];
 
-            if (cpEntry.tag !== ConstantType.STRING) return;
+            // Is this a string constant?
+            if (constantEntry.tag !== ConstantType.STRING) {
+              return;
+            }
 
-            const strEntry = classFile.constant_pool[cpEntry.string_index];
-            const strValue = utf8ByteArrayToString(strEntry.bytes);
+            const utf8Constant = classFile.constant_pool[constantEntry.string_index];
+            const stringValue = utf8ByteArrayToString(utf8Constant.bytes);
 
-            // Append element
+            // Map useful information about this string
+            stringMap[stringId] = {
+              ownerClass: file.name,
+              constantPoolIndex: constantEntry.string_index
+            };
+
+            // Create the DOM element
             const entryContainer = document.createElement('div');
             const inputLabel = document.createElement('label');
             const input = document.createElement('input');
 
-            stringMap[id] = {
-              ownerClass: file.name,
-              constantPoolIndex: cpEntry.string_index
-            };
-
-            entryContainer.setAttribute('data-id', id);
+            entryContainer.setAttribute('data-id', stringId);
             entryContainer.className = 'input-field';
-            inputLabel.innerText = strValue;
-            inputLabel.setAttribute('for', `input-id-${id}`);
+            inputLabel.innerText = stringValue.replace('\n', '\\n');
+            inputLabel.setAttribute('for', `input-id-${stringId}`);
             input.type = 'text';
-            input.id = `input-id-${id}`;
+            input.id = `input-id-${stringId}`;
 
             entryContainer.appendChild(inputLabel);
             entryContainer.appendChild(input);
 
             elements.push(entryContainer);
-            ++id;
+            stringId++;
           });
       })
 
-      if (elements.length == 0) return;
-
-      $stringList.append(elements);
+      if (elements.length > 0) {
+        $stringList.append(elements);
+      }
     }
 
     reader.onload = (e) => {
@@ -178,17 +186,18 @@ $(function () {
       new JSZip()
         .loadAsync(data)
         .then(zip => {
+          // save zip instance
+          jarFile = zip;
+
           zip
             .filter(f => f.endsWith('.class'))
             .forEach(f => {
               f.async('arraybuffer')
-                .then(data => parseClassContents({
+                .then(data => readStrings({
                   name: f.name,
                   data: data
                 }));
             });
-
-          jarFile = zip;
         });
     };
 
