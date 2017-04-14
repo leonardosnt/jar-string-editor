@@ -55,11 +55,12 @@ $(function () {
       
       // ZipObject#async's promises
       const promises = [];
+      const classFiles = [];
 
       $stringList
         .children('.input-field')
         .filter((idx, ele) => $(ele).children('input').val() !== '')
-        .map((idx, ele) => {
+        .each((idx, ele) => {
           const $element = $(ele);
 
           // Changed string
@@ -70,7 +71,7 @@ $(function () {
           const promise = jarFile.file(strMapValue.ownerClass).async('arraybuffer');
           
           promise.then(data => {
-            const classFile = reader.read(data);
+            const classFile = classFiles[strMapValue.ownerClass] || (classFiles[strMapValue.ownerClass] = reader.read(data));
 
             const utf8Constant = classFile.constant_pool[strMapValue.constantPoolIndex];
             const stringBytes = stringToUtf8ByteArray(inputValue.replace('\\n', '\n'));
