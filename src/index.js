@@ -20,6 +20,7 @@ import { JavaClassFileWriter, JavaClassFileReader, Opcode, ConstantType, Instruc
 import JSZip from 'jszip';
 import { stringToUtf8ByteArray, utf8ByteArrayToString } from './crypt';
 import { saveAs } from 'file-saver';
+import I18n from './I18n';
 
 $(function () {
   const $stringList = $('#string-list');
@@ -205,3 +206,27 @@ $(function () {
   })
 });
 
+let storedUiLanguage = localStorage.getItem('ui_language');
+
+if (storedUiLanguage) {
+  I18n.load(storedUiLanguage);
+
+  $(`input[data-lang-id]`).each((idx, ele) => {
+    let target = $(ele);
+    let langId = target.attr('data-lang-id');
+
+    if (storedUiLanguage !== langId) {
+      target.removeAttr('checked');
+    } else {
+      target.attr('checked', '');
+    }
+  });
+}
+
+$('input[data-lang-id]').on('change', e => {
+  let target = $(e.target);
+  let newLang = target.attr('data-lang-id');
+
+  localStorage.setItem('ui_language', newLang);
+  I18n.load(newLang);
+});
