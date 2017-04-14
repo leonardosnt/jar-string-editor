@@ -206,7 +206,7 @@ $(function () {
   })
 });
 
-let storedUiLanguage = localStorage.getItem('ui_language');
+let storedUiLanguage = localStorage.getItem('ui_language') || navigator.language;
 
 if (storedUiLanguage) {
   I18n.load(storedUiLanguage);
