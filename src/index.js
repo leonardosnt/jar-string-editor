@@ -103,24 +103,33 @@ $(function () {
     $('#file-input').click();
   });
 
-  $('#file-input').change(e => {
-    const reader = new FileReader();
-    const jclassReader = new JavaClassFileReader();
-    const file = e.target.files[0];
+  $('#file-input').change(event => {
+    const fileReader = new FileReader();
+    const classReader = new JavaClassFileReader();
+    const selectedFile = event.target.files[0];
 
-    if (file === undefined) {
+    if (selectedFile === undefined) {
       return;
     }
 
     // Reset stuff
     stringId = 0;
     stringMap = {};
-    fileName = file.name;
+    fileName = selectedFile.name;
     $stringList.empty();
 
+    /**
+     * @param {File} file 
+     */
     function readStrings (file) {
-      const classFile = jclassReader.read(file.data);
-      const elements = [];
+      const classFile = classReader.read(file.data);
+      const fragment = document.createDocumentFragment();
+
+      /**
+       * Save strings (constant pool index) that has been mapped before, this will avoid duplicating strings, 
+       * since constant pool entries can be referenced multiple times in the same class.
+       */
+      const alreadyMappedStrings = {};
 
       classFile.methods.filter(md => (md.access_flags & Modifier.ABSTRACT) === 0).forEach(method => {
         const codeAttribute = method.attributes.filter(attr => {
@@ -148,6 +157,11 @@ $(function () {
               return;
             }
 
+            // Check if this string was already mapped.
+            if (alreadyMappedStrings[constantIndex] !== undefined) {
+              return;
+            }
+
             const utf8Constant = classFile.constant_pool[constantEntry.string_index];
             const stringValue = utf8ByteArrayToString(utf8Constant.bytes);
 
@@ -156,6 +170,8 @@ $(function () {
               ownerClass: file.name,
               constantPoolIndex: constantEntry.string_index
             };
+            
+            alreadyMappedStrings[constantIndex] = true;
 
             // Create the DOM element
             const entryContainer = document.createElement('div');
@@ -172,48 +188,58 @@ $(function () {
             entryContainer.appendChild(inputLabel);
             entryContainer.appendChild(input);
 
-            elements.push(entryContainer);
+            fragment.appendChild(entryContainer);
             stringId++;
           });
       })
 
-      if (elements.length > 0) {
-        $stringList.append(elements);
+      if (fragment.childNodes.length > 0) {
+        $stringList.append(fragment);
       }
     }
 
-    reader.onload = (e) => {
-      const data = e.target.result;
+    /**
+     * @param {Event} event 
+     */
+    function onFileLoaded (event) {
+      const fileData = event.target.result;
+      new JSZip().loadAsync(fileData).then(onZipLoaded);
+    }
 
-      new JSZip()
-        .loadAsync(data)
-        .then(zip => {
-          // save zip instance
-          jarFile = zip;
+    /**
+     * @param {JSZip} zip 
+     */
+    function onZipLoaded (zip) {
+      // save jszip instance
+      jarFile = zip;
 
-          zip
-            .filter(f => f.endsWith('.class'))
-            .forEach(f => {
-              f.async('arraybuffer')
-                .then(data => readStrings({
-                  name: f.name,
-                  data: data
-                }));
-            });
+      zip.filter(file => file.endsWith('.class'))
+        .forEach(file => {
+          file.async('arraybuffer')
+            .then(data => readStrings({ name: file.name, data: data }));
         });
-    };
+    }
 
-    reader.readAsArrayBuffer(file);
+    fileReader.onload = onFileLoaded;
+    fileReader.readAsArrayBuffer(selectedFile);
   })
 });
 
-let storedUiLanguage = localStorage.getItem('ui_language') || navigator.language;
+// localStorage isn't working on Edge
+let localStorageWorking = true;
+try {
+  localStorage;
+} catch (ex) {
+  localStorageWorking = false;
+}
+
+let storedUiLanguage = localStorageWorking ? localStorage.getItem('ui_language') : navigator.language || 'en-US';
 
 if (storedUiLanguage) {
   I18n.load(storedUiLanguage);
 
-  $(`input[data-lang-id]`).each((idx, ele) => {
-    let target = $(ele);
+  $(`input[data-lang-id]`).each((idx, element) => {
+    let target = $(element);
     let langId = target.attr('data-lang-id');
 
     if (storedUiLanguage !== langId) {
@@ -224,10 +250,12 @@ if (storedUiLanguage) {
   });
 }
 
-$('input[data-lang-id]').on('change', e => {
-  let target = $(e.target);
+$('input[data-lang-id]').on('change', event => {
+  let target = $(event.target);
   let newLang = target.attr('data-lang-id');
 
-  localStorage.setItem('ui_language', newLang);
+  if (localStorageWorking) {
+    localStorage.setItem('ui_language', newLang);
+  }
   I18n.load(newLang);
 });
