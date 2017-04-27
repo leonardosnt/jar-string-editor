@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Jar String Editor</title>
 
-    <meta name="author" content="leonardosnt (leonrdsnt[at]gmail[dot]com)">
-    <meta name="description" content="Jar String Editor">
-    <meta name="keywords" content="jar, string, editor, class, java">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
-  </head>
-  <body>
-   <div class="container">
+<head>
+  <meta charset="UTF-8">
+  <title>Jar String Editor</title>
+
+  <meta name="author" content="leonardosnt (leonrdsnt[at]gmail[dot]com)">
+  <meta name="description" content="Jar String Editor">
+  <meta name="keywords" content="jar, string, editor, class, java">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
     <div class="row">
       <h5 id="status-label" data-i18n-text="select_the_file">Select the file (.jar)</h5>
-      <h6 data-i18n-text="select_the_file_label"></h6>
+      <h6 data-i18n-text="select_the_file_label">The file will be loaded in your browser, try to not select a huge file</h6>
     </div>
 
     <div class="row">
       <input type="file" id="file-input" accept=".jar" name="file" style="display: none;" />
-      <button id="select-file" type="file" class="waves-effect waves-light btn" data-i18n-text="select_file">Select file</button>
+      <button id="select-file" class="waves-effect waves-light btn" data-i18n-text="select_file">Select file</button>
 
       <button id="save-file" class="waves-effect waves-light btn" data-i18n-text="save_file">Save file</button>
 
@@ -48,8 +50,7 @@
     </div>
 
     <div id="string-list" class="row" style="margin-top: 30px;"></div>
-   </div>
-  </body>
+  </div>
   <script src="../dist/vendors.js"></script>
   <script src="../dist/app.js"></script>
   <script>
@@ -69,4 +70,6 @@
       outDuration: 100,
     });
   </script>
+</body>
+
 </html>
