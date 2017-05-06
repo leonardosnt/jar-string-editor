@@ -1,0 +1,1 @@
+webpackJsonp([1],{119:function(t,o,e){"use strict";void 0===NodeList.prototype.forEach&&(NodeList.prototype.forEach=Array.prototype.forEach);try{localStorage}catch(t){Object.defineProperty(window,"localStorage",{value:{getItem:function(){},setItem:function(){},clear:function(){},removeItem:function(){}}})}}},[119]);
