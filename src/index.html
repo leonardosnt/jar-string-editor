@@ -4,14 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <title>Jar String Editor</title>
+  
+  <link rel="dns-prefetch" href="//google-analytics.com">
+  <link rel="dns-prefetch" href="//www.google-analytics.com">
+  <link rel="dns-prefetch" href="//ajax.googleapis.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
   <meta name="author" content="leonardosnt (leonrdsnt[at]gmail[dot]com)">
   <meta name="description" content="Jar String Editor">
   <meta name="keywords" content="jar, string, editor, class, java">
 
+  <link rel="stylesheet" href="index.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js" defer></script>
 </head>
 
 <body>
@@ -22,54 +29,62 @@
     </div>
 
     <div class="row">
-      <input type="file" id="file-input" accept=".jar" name="file" style="display: none;" />
+      <input type="file" id="file-input" accept=".jar" name="file" />
       <button id="select-file" class="waves-effect waves-light btn" data-i18n-text="select_file">Select file</button>
 
       <button id="save-file" class="waves-effect waves-light btn" data-i18n-text="save_file">Save file</button>
 
-      <a class="waves-effect waves-light btn" href="#modal1" style="float: right;">
-        UI Language
-      </a>
+      <a class="waves-effect waves-light btn right" href="#settings-modal" data-i18n-text="settings">Settings</a>
     </div>
 
-    <div id="modal1" class="modal">
+    <div id="settings-modal" class="modal">
       <div class="modal-content">
-        <h5 data-i18n-text="select_lang">Select language</h5>
-        <p>
-          <input name="group1" type="radio" data-lang-id="pt-BR" id="lang_pt-BR" />
-          <label for="lang_pt-BR">Portuguese (Brazil)</label>
-        </p>
-        <p>
-          <input name="group1" type="radio" data-lang-id="en" id="lang_en" />
-          <label for="lang_en">English</label>
-        </p>
+        <h5 class="modal-header" data-i18n-text="settings">Settings</h5>
+
+        <div class="option-group">
+          <span class="option-group-title" data-i18n-text="select_lang">Select language</span>
+          <p>
+            <input name="langs-group" type="radio" data-lang-id="pt-BR" id="lang_pt-BR" />
+            <label for="lang_pt-BR">Portuguese (Brazil)</label>
+          </p>
+          <p>
+            <input name="langs-group" type="radio" data-lang-id="en" id="lang_en" />
+            <label for="lang_en">English</label>
+          </p>
+        </div>
+
+        <div class="option-group">
+          <span class="option-group-title" data-i18n-text="misc_options">Misc</span>
+          <p class="checkbox-filled">
+            <input type="checkbox" class="filled-in" data-setting-id="showContext" id="show-context" checked="checked" />
+            <label for="show-context">Mostrar contexto da string.</label>
+          </p>
+          <p class="checkbox-filled">
+            <input type="checkbox" class="filled-in" data-setting-id="orderByContext" id="order-by-context" checked="checked" />
+            <label for="order-by-context">Organizar pelo contexto.</label>
+          </p>
+        </div>
       </div>
       <div class="modal-footer">
         <a class=" modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
       </div>
     </div>
 
-    <div id="string-list" class="row" style="margin-top: 30px;"></div>
+    <div id="string-list" class="row"></div>
   </div>
-  <script src="../dist/vendors.js"></script>
-  <script src="../dist/app.js"></script>
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-81494650-2', 'auto');
+  <script src="../dist/vendors.js" defer></script>
+  <script src="../dist/polyfill.js" defer></script>
+  <script src="../dist/app.js" defer></script>
+  
+  <!-- Google Analytics -->
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-XXXXX-Y', 'auto');
     ga('send', 'pageview');
   </script>
-  <script>
-    $('.modal').modal({
-      dismissible: true,
-      opacity: .5,
-      inDuration: 100,
-      outDuration: 100,
-    });
-  </script>
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+  <!-- End Google Analytics -->
 </body>
 
 </html>

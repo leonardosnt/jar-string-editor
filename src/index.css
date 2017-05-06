@@ -1,0 +1,110 @@
+.string-ctx {
+  right: 0px !important;
+  left: initial !important;
+  cursor: help !important;
+}
+
+.string-ctx:hover p {
+  display: block;
+  transform-origin: 100% 0%;
+
+  -webkit-animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content .option-group {
+  margin-top: 20px;
+}
+
+.modal-content .option-group .option-group-title {
+  font-size: 17px;
+}
+.modal-content .option-group .checkbox-filled {
+  margin-left: 3px;
+}
+
+.modal-content .option-group .checkbox-filled > label {
+  line-height: 21px;
+}
+
+#file-input {
+  display: none;
+}
+
+#string-list {
+  margin-top: 30px;
+}
+
+/* Adapted from http://tutorialzine.com/2014/07/css-inline-help-tips/ */
+.help-tip {
+  display: none;
+  text-align: left;
+  background-color: #2bbbad;
+  padding: 10px;
+  width: 300px;
+  position: absolute;
+  border-radius: 3px;
+  right: -4px;
+  color: #FFF;
+  font-size: 13px;
+  line-height: 1.4;
+  z-index: 2 !important;
+}
+
+.help-tip .should-modify {
+  margin-top: 10px;
+  display: block;
+}
+
+.help-tip .should-modify.yes {
+  color: #00ff0a;
+}
+
+.help-tip .should-modify.no {
+  color: red;
+}
+
+.help-tip .should-modify.maybe {
+  color: yellow;
+}
+
+.help-tip:before {
+  position: absolute;
+  content: '';
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-bottom-color: #2bbbad;
+  right: 10px;
+  top: -12px;
+}
+
+.help-tip:after {
+  width: 100%;
+  height: 40px;
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: 0;
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 100%;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 100%;
+  }
+}

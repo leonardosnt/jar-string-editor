@@ -1,16 +1,21 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const NotifyPlugin = require('./NotifyPlugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    app: './src/js/index.js',
+    polyfill: './src/js/polyfill.js'
+  },
   output: {
-    filename: 'dist/app.js'
+    filename: 'dist/[name].js'
   },
   node: {
     fs: 'empty',
     process: false
   },
   plugins: [
+    new NotifyPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       filename: "dist/vendors.js",
@@ -39,5 +44,5 @@ module.exports = {
 
 // Production build
 if (process.argv.indexOf('-p') !== -1) {
-  module.exports.plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false }}))
+  module.exports.plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: true }}))
 }

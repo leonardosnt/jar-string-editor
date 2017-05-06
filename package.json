@@ -8,9 +8,9 @@
     "url": "git+https://github.com/leonardosnt/jar-string-editor.git"
   },
   "scripts": {
-    "devbuild": "./node_modules/.bin/webpack",
-    "prodbuild": "./node_modules/.bin/webpack -p",
-    "watch": "./node_modules/.bin/webpack --watch"
+    "devbuild": "webpack",
+    "prodbuild": "webpack -p",
+    "watch": "webpack --watch"
   },
   "author": "leonardosnt",
   "license": "GPL-2.0",
@@ -22,11 +22,10 @@
   "devDependencies": {
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
+    "babel-plugin-transform-strict-mode": "^6.24.1",
     "babel-preset-es2015": "^6.22.0",
-    "gulp": "^3.9.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglifyjs": "^0.6.2",
-    "gulp-webpack": "^1.5.0",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "webpack-error-notification": "^0.1.7",
+    "webpack-stream": "^3.2.0"
   }
 }
