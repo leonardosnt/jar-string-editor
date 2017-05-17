@@ -121,7 +121,7 @@ function onFileSelected (event) {
       for (let i = 0; i < instructions.length; i++) {
         const insn = instructions[i];
 
-        // We only wan't LDC_W & LDC instructions
+        // We only want LDC_W & LDC instructions
         if (insn.opcode !== Opcode.LDC && insn.opcode !== Opcode.LDC_W) {
           continue;
         }
