@@ -49,7 +49,7 @@ const settings = {
 
 /**
  * Save information about each string.
- * 
+ *
  * {
  *   id: {
  *     ownerClass: string, // Class that owns this string
@@ -73,8 +73,8 @@ const i18n = new I18n(translations);
 
 /**
  * Called when user select a file.
- * 
- * @param {Event} e 
+ *
+ * @param {Event} e
  */
 function onFileSelected (event) {
   const fileReader = new FileReader();
@@ -95,13 +95,21 @@ function onFileSelected (event) {
   $('#string-list').empty();
 
   /**
-   * @param {File} file 
+   * @param {File} file
    */
   function readStrings (file) {
-    const classFile = classReader.read(file.data);
+    let classFile;
+
+    try {
+      classFile = classReader.read(file.data);
+    } catch(ex) {
+      console.error(`Failed to read ${file.name}`);
+      console.error(ex);
+      return;
+    }
 
     /**
-     * Save strings (constant pool index) that has been mapped before, this will avoid duplicating strings, 
+     * Save strings (constant pool index) that has been mapped before, this will avoid duplicating strings,
      * since constant pool entries can be referenced multiple times in the same class.
      */
     const alreadyMappedStrings = {};
@@ -144,7 +152,7 @@ function onFileSelected (event) {
 
         const utf8Constant = classFile.constant_pool[constantEntry.string_index];
         const stringValue = utf8ByteArrayToString(utf8Constant.bytes);
-        const context = settings.showContext 
+        const context = settings.showContext
           ? getStringContext(classFile.constant_pool, instructions, i)
           : undefined;
 
@@ -153,7 +161,7 @@ function onFileSelected (event) {
           ownerClass: file.name,
           constantPoolIndex: constantEntry.string_index
         };
-        
+
         alreadyMappedStrings[constantIndex] = true;
 
         // Create the DOM element
@@ -209,7 +217,7 @@ function onFileSelected (event) {
   }
 
   /**
-   * @param {Event} event 
+   * @param {Event} event
    */
   function onFileLoaded (event) {
     const fileData = event.target.result;
@@ -217,7 +225,7 @@ function onFileSelected (event) {
   }
 
   /**
-   * @param {JSZip} zip 
+   * @param {JSZip} zip
    */
   function onZipLoaded (zip) {
     // save jszip instance
@@ -233,7 +241,7 @@ function onFileSelected (event) {
     Promise.all(readStringPromises)
       .then(() => {
         const childNodes = Array.prototype.slice.call(stringsFragment.childNodes, 0);
-        
+
         // TODO: Order by size?
         if (settings.showContext && settings.orderByContext) {
           childNodes.sort(sortStringByContext);
@@ -249,8 +257,8 @@ function onFileSelected (event) {
 
 /**
  * Called when user clicks in 'Save File' button
- * 
- * @param {Event} e 
+ *
+ * @param {Event} e
  */
 function onSaveFileClick (e) {
   if (jarFile === undefined) {
@@ -260,7 +268,7 @@ function onSaveFileClick (e) {
 
   const writer = new JavaClassFileWriter();
   const reader = new JavaClassFileReader();
-  
+
   // ZipObject#async's promises
   const promises = [];
   const classFiles = [];
@@ -277,7 +285,7 @@ function onSaveFileClick (e) {
       const strMapValue = stringMap[strMapIndex];
 
       const promise = jarFile.file(strMapValue.ownerClass).async('arraybuffer');
-      
+
       promise.then(data => {
         const classFile = classFiles[strMapValue.ownerClass] || (classFiles[strMapValue.ownerClass] = reader.read(data));
 
@@ -307,14 +315,14 @@ function onSaveFileClick (e) {
 }
 
 /**
- * Get context for a string at given index 
- * 
+ * Get context for a string at given index
+ *
  * Contexts:
  *  - sendMessage - Means that the string will be sent to a CommandSender using CommandSender#sendMessage and can be safely modified.
- * 
+ *
  * @param {ConstantPoolInfo[]} constantPool
- * @param {Instruction[]} instructions 
- * @param {number} index 
+ * @param {Instruction[]} instructions
+ * @param {number} index
  */
 function getStringContext (constantPool, instructions, index) {
   const nextInstruction = instructions[index + 1];
@@ -350,7 +358,7 @@ function getStringContext (constantPool, instructions, index) {
 
 /**
  * SendMessage > Any context(2) > No Context(1)
- * 
+ *
  * @param {string} ctx
  */
 function contextPriority(ctx) {
@@ -364,8 +372,8 @@ function contextPriority(ctx) {
 }
 
 /**
- * @param {Element} a 
- * @param {Element} b 
+ * @param {Element} a
+ * @param {Element} b
  */
 function sortStringByContext(a, b) {
   const strCtxA = a.querySelector('.string-ctx');
