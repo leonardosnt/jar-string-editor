@@ -142,7 +142,7 @@ function onFileSelected (event) {
 
         // Is this a string constant?
         if (constantEntry.tag !== ConstantType.STRING) {
-          return;
+          continue;
         }
 
         // Check if this string was already mapped.
