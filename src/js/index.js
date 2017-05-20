@@ -112,7 +112,7 @@ function onFileSelected (event) {
      * Save strings (constant pool index) that has been mapped before, this will avoid duplicating strings,
      * since constant pool entries can be referenced multiple times in the same class.
      */
-    const alreadyMappedStrings = {};
+    // const alreadyMappedStrings = {};
 
     classFile.methods.filter(md => (md.access_flags & Modifier.ABSTRACT) === 0).forEach(method => {
       const codeAttribute = method.attributes.filter(attr => {
@@ -146,9 +146,9 @@ function onFileSelected (event) {
         }
 
         // Check if this string was already mapped.
-        if (alreadyMappedStrings[constantIndex] !== undefined) {
-          return;
-        }
+        // if (alreadyMappedStrings[constantIndex] !== undefined) {
+        //   return;
+        // }
 
         const utf8Constant = classFile.constant_pool[constantEntry.string_index];
         const stringValue = utf8ByteArrayToString(utf8Constant.bytes);
@@ -162,7 +162,7 @@ function onFileSelected (event) {
           constantPoolIndex: constantEntry.string_index
         };
 
-        alreadyMappedStrings[constantIndex] = true;
+        // alreadyMappedStrings[constantIndex] = true;
 
         // Create the DOM element
         const entryContainer = document.createElement('div');
