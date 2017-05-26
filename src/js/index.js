@@ -315,14 +315,14 @@ function onSaveFileClick (e) {
 }
 
 /**
- * Get context for a string at given index
+ * Get context for a string.
  *
  * Contexts:
  *  - sendMessage - Means that the string will be sent to a CommandSender using CommandSender#sendMessage and can be safely modified.
  *
  * @param {ConstantPoolInfo[]} constantPool
  * @param {Instruction[]} instructions
- * @param {number} index
+ * @param {number} index - Index in instructions
  */
 function getStringContext (constantPool, instructions, index) {
   const nextInstruction = instructions[index + 1];
