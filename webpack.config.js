@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const NotifyPlugin = require('./NotifyPlugin');
 
 module.exports = {
   entry: {
@@ -15,7 +14,6 @@ module.exports = {
     process: false
   },
   plugins: [
-    new NotifyPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendors',
       filename: "dist/vendors.js",

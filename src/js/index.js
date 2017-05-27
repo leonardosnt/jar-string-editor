@@ -22,6 +22,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import I18n from './I18n';
 import translations from './translations';
+import StringSearcher from './string-searcher';
 
 /**
  * ShouldBeModified:
@@ -94,126 +95,71 @@ function onFileSelected (event) {
   fileName = selectedFile.name;
   $('#string-list').empty();
 
-  /**
-   * @param {File} file
-   */
-  function readStrings (file) {
-    let classFile;
+  function onStringFound ({ classFile, method, instructions, instructionIndex, constantIndex }) {
+    const constantEntry = classFile.constant_pool[constantIndex];
+    const utf8Constant = classFile.constant_pool[constantEntry.string_index];
+    const stringValue = utf8ByteArrayToString(utf8Constant.bytes);
+    const context = settings.showContext
+      ? getStringContext(classFile.constant_pool, instructions, instructionIndex)
+      : undefined;
 
-    try {
-      classFile = classReader.read(file.data);
-    } catch(ex) {
-      console.error(`Failed to read ${file.name}`);
-      console.error(ex);
-      return;
+    const classFileNameIndex = classFile.constant_pool[classFile.this_class].name_index;
+    const classFileName = utf8ByteArrayToString(classFile.constant_pool[classFileNameIndex].bytes);
+
+    // Map useful information about this string
+    stringMap[stringId] = {
+      ownerClass: `${classFileName}.class`,
+      constantPoolIndex: constantEntry.string_index
+    };
+
+    // Create the DOM element
+    const entryContainer = document.createElement('div');
+    const inputLabel = document.createElement('label');
+    const input = document.createElement('input');
+
+    entryContainer.setAttribute('data-id', stringId);
+    entryContainer.className = 'input-field';
+    inputLabel.innerText = stringValue.replace('\n', '\\n');
+    inputLabel.setAttribute('for', `input-id-${stringId}`);
+    input.type = 'text';
+    input.id = `input-id-${stringId}`;
+
+    if (context !== undefined) {
+      const contextLabel = document.createElement('label');
+      const contextHelpMessage = i18n.translate(`context_help_${context}`);
+
+      contextLabel.className = 'string-ctx';
+      contextLabel.innerText = i18n.translate('context', context);
+      contextLabel.setAttribute('for', `input-id-${stringId}`);
+      contextLabel.setAttribute('data-ctx', context);
+
+      if (contextHelpMessage !== undefined) {
+        const helpTipElement = document.createElement('p');
+        const contextInfo = contextInfoMap[context];
+
+        helpTipElement.className = 'help-tip';
+        helpTipElement.innerText = contextHelpMessage;
+
+        if (contextInfo !== undefined && contextInfo.shouldBeModified !== undefined) {
+          const shouldModifyLabel = document.createElement('span');
+
+          shouldModifyLabel.className = `should-modify ${contextInfo.shouldBeModified}`;
+          shouldModifyLabel.innerText = i18n.translate(`context_should_be_modified_${contextInfo.shouldBeModified}`);
+
+          helpTipElement.appendChild(shouldModifyLabel);
+        }
+
+        contextLabel.appendChild(helpTipElement);
+      }
+
+      entryContainer.appendChild(contextLabel);
     }
 
-    /**
-     * Save strings (constant pool index) that has been mapped before, this will avoid duplicating strings,
-     * since constant pool entries can be referenced multiple times in the same class.
-     */
-    const alreadyMappedStrings = {};
+    entryContainer.appendChild(inputLabel);
+    entryContainer.appendChild(input);
 
-    classFile.methods.filter(md => (md.access_flags & Modifier.ABSTRACT) === 0).forEach(method => {
-      const codeAttribute = method.attributes.filter(attr => {
-        const attributeNameBytes = classFile.constant_pool[attr.attribute_name_index].bytes;
-        return attributeNameBytes.length === 4 && String.fromCharCode.apply(null, attributeNameBytes) === "Code";
-      })[0];
-
-      if (codeAttribute === undefined || codeAttribute.length == 0) {
-        return;
-      }
-
-      const instructions = InstructionParser.fromBytecode(codeAttribute.code);
-
-      for (let i = 0; i < instructions.length; i++) {
-        const insn = instructions[i];
-
-        // We only want LDC_W & LDC instructions
-        if (insn.opcode !== Opcode.LDC && insn.opcode !== Opcode.LDC_W) {
-          continue;
-        }
-
-        const constantIndex = insn.opcode == Opcode.LDC
-          ? insn.operands[0]
-          : (insn.operands[0] << 8) | insn.operands[1];
-
-        const constantEntry = classFile.constant_pool[constantIndex];
-
-        // Is this a string constant?
-        if (constantEntry.tag !== ConstantType.STRING) {
-          continue;
-        }
-
-        // Check if this string was already mapped.
-        if (alreadyMappedStrings[constantIndex] !== undefined) {
-          continue;
-        }
-
-        const utf8Constant = classFile.constant_pool[constantEntry.string_index];
-        const stringValue = utf8ByteArrayToString(utf8Constant.bytes);
-        const context = settings.showContext
-          ? getStringContext(classFile.constant_pool, instructions, i)
-          : undefined;
-
-        // Map useful information about this string
-        stringMap[stringId] = {
-          ownerClass: file.name,
-          constantPoolIndex: constantEntry.string_index
-        };
-
-        alreadyMappedStrings[constantIndex] = true;
-
-        // Create the DOM element
-        const entryContainer = document.createElement('div');
-        const inputLabel = document.createElement('label');
-        const input = document.createElement('input');
-
-        entryContainer.setAttribute('data-id', stringId);
-        entryContainer.className = 'input-field';
-        inputLabel.innerText = stringValue.replace('\n', '\\n');
-        inputLabel.setAttribute('for', `input-id-${stringId}`);
-        input.type = 'text';
-        input.id = `input-id-${stringId}`;
-
-        if (context !== undefined) {
-          const contextLabel = document.createElement('label');
-          const contextHelpMessage = i18n.translate(`context_help_${context}`);
-
-          contextLabel.className = 'string-ctx';
-          contextLabel.innerText = i18n.translate('context', context);
-          contextLabel.setAttribute('for', `input-id-${stringId}`);
-          contextLabel.setAttribute('data-ctx', context);
-
-          if (contextHelpMessage !== undefined) {
-            const helpTipElement = document.createElement('p');
-            const contextInfo = contextInfoMap[context];
-
-            helpTipElement.className = 'help-tip';
-            helpTipElement.innerText = contextHelpMessage;
-
-            if (contextInfo !== undefined && contextInfo.shouldBeModified !== undefined) {
-              const shouldModifyLabel = document.createElement('span');
-
-              shouldModifyLabel.className = `should-modify ${contextInfo.shouldBeModified}`;
-              shouldModifyLabel.innerText = i18n.translate(`context_should_be_modified_${contextInfo.shouldBeModified}`);
-
-              helpTipElement.appendChild(shouldModifyLabel);
-            }
-
-            contextLabel.appendChild(helpTipElement);
-          }
-
-          entryContainer.appendChild(contextLabel);
-        }
-
-        entryContainer.appendChild(inputLabel);
-        entryContainer.appendChild(input);
-
-        stringsFragment.appendChild(entryContainer);
-        stringId++;
-      }
-    });
+    stringsFragment.appendChild(entryContainer);
+    stringId++;
   }
 
   /**
@@ -231,24 +177,22 @@ function onFileSelected (event) {
     // save jszip instance
     jarFile = zip;
 
-    zip.filter(file => file.endsWith('.class'))
-      .forEach(file => {
-        const promise = file.async('arraybuffer')
-          .then(data => readStrings({ name: file.name, data: data }));
-        readStringPromises.push(promise);
-      });
+    const stringSearcher = new StringSearcher();
 
-    Promise.all(readStringPromises)
-      .then(() => {
-        const childNodes = Array.prototype.slice.call(stringsFragment.childNodes, 0);
+    stringSearcher.on('finish', () => {
+      const childNodes = Array.prototype.slice.call(stringsFragment.childNodes, 0);
 
-        // TODO: Order by size?
-        if (settings.showContext && settings.orderByContext) {
-          childNodes.sort(sortStringByContext);
-        }
+      // TODO: Order by size?
+      if (settings.showContext && settings.orderByContext) {
+        childNodes.sort(sortStringByContext);
+      }
 
-        $('#string-list').append(childNodes);
-      });
+      $('#string-list').append(childNodes);
+    });
+
+    stringSearcher.on('found', onStringFound);
+
+    stringSearcher.searchInJar(jarFile);
   }
 
   fileReader.onload = onFileLoaded;
