@@ -88,6 +88,12 @@ function onFileSelected (event) {
   if (selectedFile === undefined) {
     return;
   }
+  
+  sendGaEvent({
+    eventCategory: 'file',
+    eventAction: 'select',
+    eventLabel: String(selectedFile.size)
+  });
 
   // Reset stuff
   stringId = 0;
@@ -209,6 +215,11 @@ function onSaveFileClick (e) {
     alert("Não ha nada para salvar.");
     return;
   }
+  
+  sendGaEvent({
+    eventCategory: 'file',
+    eventAction: 'save'
+  });
 
   const writer = new JavaClassFileWriter();
   const reader = new JavaClassFileReader();
@@ -337,6 +348,16 @@ function onSettingChanged (e) {
 
   settings[settingId] = settingValue;
   localStorage.setItem(`setting_${settingId}`, settingValue);
+}
+
+function sendGaEvent(data) {
+  try {
+    if (typeof ga === "function") {
+      ga('send', 'event', data);
+    }
+  } catch(e) {
+    console.error(e);
+  }
 }
 
 function onLanguageChanged (e) {
