@@ -84,7 +84,7 @@ export default class SettingsPanel extends Component {
               persistTo={settings}
               persistKey={'hideEmptyStrings'}
             >
-              Não mostrar strings vazias.
+              Ocultar strings vazias.
             </CheckboxOption>
           </div>
 

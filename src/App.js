@@ -193,7 +193,7 @@ class App extends Component {
     for (const string of context.strings) {
       const { value } = string;
 
-      if (settings.filterEmptyStrings && !value.trim().length) continue;
+      if (settings.hideEmptyStrings && !value.trim().length) continue;
 
       // No filter is applied
       if (!context.filter) {
@@ -298,7 +298,26 @@ const Footer = () => (
       leonardosnt
     </a>
     {'.'}
+    {'   '}
+    <div style={{ paddingTop: '.6em' }}>
+      <b>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: 'rgba(0,0,0,.9)',
+            textDecoration: 'none',
+            fontSize: '.75em',
+          }}
+          href="https://jar-string-editor-v1.now.sh/"
+        >
+          Não gostou a nova versão? Clique aqui para usar a antiga.
+        </a>
+      </b>
+    </div>
   </div>
 );
+
+window.__BUILD_INFO__ = process.env.__BUILD_INFO__;
 
 export default App;
