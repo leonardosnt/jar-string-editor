@@ -259,6 +259,7 @@ module.exports = {
         minifyURLs: true,
       },
     }),
+    new HtmlReplaceVars(),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
     // It is absolutely essential that NODE_ENV was set to production here.
@@ -341,4 +342,38 @@ module.exports = {
     tls: 'empty',
     child_process: 'empty',
   },
+};
+
+function HtmlReplaceVars() {
+  this.vars = {
+    'RAVEN-SCRIPT': `
+      <script src="https://cdn.ravenjs.com/3.21.0/raven.min.js" crossorigin="anonymous"></script>
+      <script>Raven.config('https://d296893cefde481da176a88b6338dcf5@sentry.io/152521').install()</script>
+    `,
+    'GA-SCRIPT': `
+      <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-81494650-4', 'auto');
+        ga('send', 'pageview');
+      </script>
+      <script async src='https://www.google-analytics.com/analytics.js'></script>
+    `,
+  };
+}
+
+HtmlReplaceVars.prototype.apply = function(compiler) {
+  compiler.plugin('compilation', compilation => {
+    compilation.plugin(
+      'html-webpack-plugin-before-html-processing',
+      (htmlPluginData, callback) => {
+        // Replace vars
+        htmlPluginData.html = htmlPluginData.html.replace(
+          /<!--\$([\w-]+)\$-->/gi,
+          (match, p1) => this.vars[p1] || match
+        );
+
+        callback(null, htmlPluginData);
+      }
+    );
+  });
 };
