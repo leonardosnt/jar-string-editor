@@ -26,23 +26,25 @@ import infoIcon from '../../icons/info.svg';
 export default class StringEntry extends Component {
   state = { focused: false };
 
-  constructor(props) {
-    super(props);
-
-    this.onDivClick = this.onDivClick.bind(this);
-    this.onInput = this.onInput.bind(this);
-  }
-
-  onDivClick({ target }) {
+  onDivClick = ({ target }) => {
+    this.shouldFocus = true;
     this.setState({ focused: true });
-  }
+  };
 
-  onInput({ target }) {
-    this.props.onChanged(target.value, this.props.string.id);
-  }
+  onInput = ({ target }) => {
+    const { string } = this.props;
+
+    // If highlightWords is not undefined it means that the string object was cloned
+    // so we need to update it's value here.
+    if (string.highlightWords) {
+      string.value = target.value;
+    }
+
+    this.props.onChanged(target.value, string.id);
+  };
 
   componentDidUpdate() {
-    if (this.state.focused) {
+    if (this.state.focused && this.shouldFocus !== false) {
       const { input } = this;
 
       input.focus();
@@ -53,6 +55,10 @@ export default class StringEntry extends Component {
       });
     }
   }
+
+  onInputBlur = () => {
+    this.setState({ focused: false });
+  };
 
   render() {
     const { focused } = this.state;
@@ -67,6 +73,7 @@ export default class StringEntry extends Component {
           ref={input => {
             this.input = input;
           }}
+          onBlur={this.onInputBlur}
           type="text"
           className="string-input"
           defaultValue={string.value}

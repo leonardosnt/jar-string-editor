@@ -64,6 +64,8 @@ export default class FileSelector extends Component {
             if (acceptedFiles.length) {
               const [file] = acceptedFiles;
 
+              message = 'Carregando arquivo';
+
               // We only care about the catch because we want to show an
               // error to the user if we can't load the file.
               this.props.onSelected(file).catch(e => {

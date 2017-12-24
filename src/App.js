@@ -89,13 +89,14 @@ class App extends Component {
   };
 
   onJarLoaded = (jar, selectedFileName) => {
-    let stringReader = (this.stringReader = new StringReader());
-    let foundStrings = [];
+    const stringReader = (this.stringReader = new StringReader());
+    const foundStrings = [];
+    const numClasses = jar.filter(path => path.endsWith('.class')).length;
     let stringId = 0;
 
     this.setState(state =>
       update(state, {
-        loadInfo: { $set: `Descompactando ${numClasses} classes` },
+        loadInfo: { $set: `Procurando 0/${numClasses} classes` },
         context: {
           loadedJar: { $set: jar },
           selectedFileName: { $set: selectedFileName },
@@ -132,8 +133,6 @@ class App extends Component {
         });
       }
     );
-
-    const numClasses = jar.filter(path => path.endsWith('.class')).length;
 
     stringReader.on('read_count', num => {
       this.setState({ loadInfo: `Procurando ${num}/${numClasses} classes` });
@@ -215,7 +214,7 @@ class App extends Component {
     return { filtered, took: filterEnd - filterStart };
   };
 
-  appContainer = children => (
+  renderAppContainer = children => (
     <div className="app-container">
       <SettingsPanel />
 
@@ -231,7 +230,7 @@ class App extends Component {
     const { loadInfo, context } = this.state;
 
     if (context.loadedJar === undefined) {
-      return this.appContainer(
+      return this.renderAppContainer(
         <div>
           <FileSelector onSelected={this.onFileSelected} />
           <Footer />
@@ -240,7 +239,7 @@ class App extends Component {
     }
 
     if (loadInfo) {
-      return this.appContainer(
+      return this.renderAppContainer(
         <div className="load-info-box">
           <SVGInline width={'100px'} svg={gearIcon} />
           <p>{loadInfo}</p>
@@ -250,7 +249,7 @@ class App extends Component {
 
     const { filtered, took } = this.filterStrings();
 
-    return this.appContainer(
+    return this.renderAppContainer(
       <div>
         <div className="header">
           <div className="search">
