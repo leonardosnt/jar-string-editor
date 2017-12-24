@@ -27,7 +27,6 @@ export default class StringEntry extends Component {
   state = { focused: false };
 
   onDivClick = ({ target }) => {
-    this.shouldFocus = true;
     this.setState({ focused: true });
   };
 
@@ -44,7 +43,7 @@ export default class StringEntry extends Component {
   };
 
   componentDidUpdate() {
-    if (this.state.focused && this.shouldFocus !== false) {
+    if (this.state.focused) {
       const { input } = this;
 
       input.focus();
