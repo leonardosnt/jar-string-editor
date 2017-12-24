@@ -2,15 +2,9 @@ cd ../gh-deploy
 
 export PUBLIC_URL="https://leonardosnt.github.io/jar-string-editor/"
 
-echo Should build [y/n] ?
+echo Building...
 
-read shouldBuild
-
-if [ $shouldBuild == "y" ]; then
-  echo Building...
-  
-  yarn build
-fi
+yarn build
 
 cp -rfv ../build/* ./
 
@@ -27,3 +21,5 @@ if [ $shouldCommit == "y" ]; then
   git commit -m "update"
   git push -u origin gh-pages
 fi
+
+read
