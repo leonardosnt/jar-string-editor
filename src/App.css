@@ -1,0 +1,50 @@
+.header {
+  margin: auto;
+  width: 90%;
+}
+
+.brand {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.search {
+  padding-top: 30px;
+}
+.search input {
+  font-size: 1em;
+  width: 100%;
+}
+
+.info {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.save-btn {
+  float: right;
+}
+
+.load-info-box {
+  margin: auto;
+
+  width: 50%;
+  height: 200px;
+
+  background: white;
+  box-shadow: 0 1px 6px 0 rgba(13, 13, 14, 0.1);
+
+  text-align: center;
+  padding: 70px;
+  cursor: pointer;
+
+  user-select: none;
+}
+.load-info-box p {
+  padding-top: 10px;
+  color: rgba(0, 0, 0, 0.8);
+}

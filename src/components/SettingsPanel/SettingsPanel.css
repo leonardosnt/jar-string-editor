@@ -1,0 +1,63 @@
+
+.settings-container .sidebar.hidden {
+  transform: translateX(100%);
+}
+
+.settings-container .sidebar .actions .done-btn {
+  position: fixed;
+  bottom: 14px;
+  margin-inline-start: 250px;
+
+}
+
+.settings-container .sidebar .done-btn:hover {
+  box-shadow: 0 0 0 3px rgba(121, 119, 119, 0.397);
+}
+
+.settings-container .sidebar {
+  top: 0px;
+  right: 0px;
+  position: fixed;
+  height: 100%;
+  background: white;
+  border-left: 1px solid #D7D7DB;
+  box-shadow: 0 1px 6px 0 rgba(13, 13, 14, 0.1);
+
+  width: 400px;
+
+  transition: 0.3s cubic-bezier(0, 0, 0, 1);
+  transition-property: transform;
+
+  z-index: 9000;
+}
+
+.settings-container .sidebar .settings-wrapper {
+  margin: 40px;
+}
+
+.settings-container .toggle-icon {
+  user-select: none;
+  -webkit-user-drag: none;
+  position: fixed;
+  top: 15px;
+  right: 30px;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 10000;
+}
+
+.settings-container .toggle-icon:hover {
+  background: rgba(215, 215, 219, 0.432);
+}
+
+.settings-wrapper section {
+  padding-bottom: 5px;
+}
+
+.settings-container label {
+  user-select: none;
+}
+
+.settings-container label {
+  user-select: none;
+}
