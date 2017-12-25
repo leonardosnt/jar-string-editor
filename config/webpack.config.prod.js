@@ -353,7 +353,7 @@ function HtmlReplaceVars() {
     'GA-SCRIPT': `
       <script>
         window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-        ga('create', 'UA-81494650-4', 'auto');
+        ga('create', 'UA-81494650-2', 'auto');
         ga('send', 'pageview');
       </script>
       <script async src='https://www.google-analytics.com/analytics.js'></script>
