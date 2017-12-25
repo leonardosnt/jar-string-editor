@@ -142,7 +142,6 @@ class App extends Component {
       // We don't need this anymore
       delete this.stringReader;
 
-      console.timeEnd('load');
       this.setState(state =>
         update(state, {
           loadInfo: { $set: undefined },
@@ -153,7 +152,6 @@ class App extends Component {
       );
     });
 
-    console.time('load');
     stringReader.searchInJar(jar);
   };
 
@@ -210,7 +208,6 @@ class App extends Component {
 
     const filterEnd = performance.now();
 
-    console.timeEnd('search');
     return { filtered, took: filterEnd - filterStart };
   };
 
