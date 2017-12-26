@@ -28,7 +28,7 @@ export default class StringList extends Component {
 
   state = { limitToRender: StringList.LOAD_MORE_AMOUNT };
 
-  loadMore() {
+  loadMore = () => {
     const { props, state } = this;
 
     if (state.limitToRender >= props.strings.length) {
@@ -38,7 +38,7 @@ export default class StringList extends Component {
     this.setState({
       limitToRender: state.limitToRender + StringList.LOAD_MORE_AMOUNT,
     });
-  }
+  };
 
   render() {
     const { strings } = this.props;
@@ -62,10 +62,7 @@ export default class StringList extends Component {
         </div>
         {remaining > 0 && (
           <div className="load-more-btn-container">
-            <Button
-              className="load-more-btn"
-              onClick={this.loadMore.bind(this)}
-            >
+            <Button className="load-more-btn" onClick={this.loadMore}>
               Carregar mais ({remaining})
             </Button>
           </div>
