@@ -19,8 +19,7 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 
-import SVGInline from 'react-svg-inline';
-import uploadIcon from '../../icons/upload.svg';
+import UploadSvg from '../../icons/upload';
 
 import './FileSelector.css';
 
@@ -87,7 +86,7 @@ export default class FileSelector extends Component {
 
             return (
               <div>
-                <SVGInline width={'100px'} svg={uploadIcon} />
+                <UploadSvg />
                 {typeof message === 'string' ? <p>{message}</p> : message}
               </div>
             );

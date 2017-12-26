@@ -21,7 +21,6 @@ import React, { Component } from 'react';
 import update from 'react-addons-update';
 import debounce from 'lodash.debounce';
 import JSZip from 'jszip';
-import SVGInline from 'react-svg-inline';
 
 import { readFileAsArrayBuffer } from './util/file-reader';
 import { Button, SettingsPanel, FileSelector, StringList } from './components';
@@ -33,8 +32,8 @@ import StringSearcher from './StringSearcher';
 import StringWriter from './StringWriter';
 import settings from './settings';
 
-import gearIcon from './icons/gear.svg';
-import coffeeIcon from './icons/coffee.svg';
+import GearSvg from './icons/gear';
+import CoffeIcon from './icons/coffee';
 
 import './App.css';
 
@@ -53,7 +52,10 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    const debounced = debounce(this.onSearchChange.bind(this), 200);
+    const debounced = debounce(
+      this.onSearchChange.bind(this),
+      settings.debounceRate
+    );
     this.onSearchChange = e => {
       e.persist();
       return debounced(e);
@@ -215,9 +217,11 @@ class App extends Component {
     <div className="app-container">
       <SettingsPanel />
 
-      <h2 className="brand" onClick={this.clearContext}>
-        Jar String Editor
-      </h2>
+      <div className="brand-container">
+        <h2 className="brand" onClick={this.clearContext}>
+          Jar String Editor
+        </h2>
+      </div>
 
       {children}
     </div>
@@ -238,7 +242,7 @@ class App extends Component {
     if (loadInfo) {
       return this.renderAppContainer(
         <div className="load-info-box">
-          <SVGInline width={'100px'} svg={gearIcon} />
+          <GearSvg />
           <p>{loadInfo}</p>
         </div>
       );
@@ -280,7 +284,7 @@ const Footer = () => (
     }}
   >
     {'Feito com muito '}
-    <SVGInline title="café" width={'15px'} svg={coffeeIcon} />
+    <CoffeIcon />
     {' por '}
     <a
       target="_blank"

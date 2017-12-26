@@ -36,18 +36,17 @@
 }
 
 .settings-container .toggle-icon {
+  padding: 4px;
+  right: 20px;
+  display: flex;
+  position: absolute;
   user-select: none;
-  -webkit-user-drag: none;
-  position: fixed;
-  top: 15px;
-  right: 30px;
   cursor: pointer;
-  padding: 5px;
   z-index: 10000;
 }
 
 .settings-container .toggle-icon:hover {
-  background: rgba(215, 215, 219, 0.432);
+  background: rgba(215, 215, 219, 0.6);
 }
 
 .settings-wrapper section {

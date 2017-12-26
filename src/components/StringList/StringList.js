@@ -48,7 +48,7 @@ export default class StringList extends Component {
 
     return (
       <div className="strings-container">
-        <div className="strings">
+        <div className="string-list">
           {strings.slice(0, limitToRender).map((string, index) => {
             return (
               <StringEntry
@@ -62,9 +62,7 @@ export default class StringList extends Component {
         </div>
         {remaining > 0 && (
           <div className="load-more-btn-container">
-            <Button className="load-more-btn" onClick={this.loadMore}>
-              Carregar mais ({remaining})
-            </Button>
+            <Button onClick={this.loadMore}>Carregar mais ({remaining})</Button>
           </div>
         )}
       </div>

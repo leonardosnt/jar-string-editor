@@ -18,6 +18,7 @@
 
 const DEFAULT_SETTINGS = {
   hideEmptyStrings: true,
+  debounceRate: 200, // Not configurable yet
 };
 
 // Load from localStorage
@@ -29,6 +30,13 @@ function load() {
   } catch (e) {
     console.error(e);
   }
+
+  // We only copy defaults if settings was sucessfully loaded, otherwise
+  // it will already return the DEFAULT_SETTINGS
+  if (settings) {
+    copyDefaults(DEFAULT_SETTINGS, settings);
+  }
+
   return settings || DEFAULT_SETTINGS;
 }
 
@@ -42,6 +50,18 @@ function save() {
 // Simple way to observe when settings is saved
 function observe(listener) {
   observers.push(listener);
+}
+
+function copyDefaults(from, to) {
+  for (const key in from) {
+    if (from[key] !== null && typeof from[key] === 'object') {
+      copyDefaults(from[key], to[key] || (to[key] = {}));
+      continue;
+    }
+    if (!to.hasOwnProperty(key) || to[key] === null) {
+      to[key] = from[key];
+    }
+  }
 }
 
 const observers = [];

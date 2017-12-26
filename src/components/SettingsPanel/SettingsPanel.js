@@ -17,12 +17,11 @@
 */
 
 import React, { Component } from 'react';
-import SVGInline from 'react-svg-inline';
 
 import settings from '../../settings';
 
-import settingsOpenIcon from '../../icons/settings-open.svg';
-import settingsCloseIcon from '../../icons/settings-close.svg';
+import SettingsOpenIcon from '../../icons/settings-open';
+import SettingsCloseIcon from '../../icons/settings-close';
 
 import { Button } from '../';
 
@@ -64,17 +63,17 @@ export default class SettingsPanel extends Component {
   render() {
     const { hidden } = this.state;
 
-    const settingsToggleIcon = hidden ? settingsOpenIcon : settingsCloseIcon;
+    const settingsToggleIcon = hidden ? (
+      <SettingsOpenIcon />
+    ) : (
+      <SettingsCloseIcon />
+    );
 
     return (
       <div className="settings-container">
-        <div onClick={this.onToggle}>
-          <SVGInline
-            className="toggle-icon"
-            svg={settingsToggleIcon}
-            alt="settings"
-          />
-        </div>
+        <span onClick={this.onToggle} className="toggle-icon">
+          {settingsToggleIcon}
+        </span>
 
         <div className={'sidebar' + (hidden ? ' hidden' : '')}>
           <div className="settings-wrapper">

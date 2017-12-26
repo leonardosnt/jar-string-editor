@@ -1,0 +1,70 @@
+.string-entry {
+  display: flex;
+  margin: 0 50px 1.5px 50px;
+}
+
+/* Reset input style */
+input.string-input {
+  border: none;
+  background-image: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  padding: 0px;
+}
+
+.strings-container .strings div.string-input {
+  cursor: pointer;
+}
+
+.string-entry .string-input {
+  flex: 1;
+
+  height: 20px;
+  padding: 2px;
+  font-size: 1em;
+  border: 1px solid rgba(0, 0, 0, .3);
+  background: white;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.string-entry .context {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  border: 1px solid rgba(0, 0, 0, .3);
+  margin-left: 2px;
+  background: rgba(13, 13, 14, 0.1);
+}
+
+.string-entry .context:hover + .context-hover {
+  display: block;
+}
+
+.string-entry .context-hover {
+  position: absolute;
+  display: none;
+  float: right;
+  background: white;
+  border-left: 1px solid rgb(206, 206, 207);
+  box-shadow: 0 2px 6px 0 rgba(13, 13, 14, 0.2);
+  padding: 10px;
+  right: 90px;
+  z-index: 1000;
+}
+
+.string-entry .context-hover span {
+  display: block;
+}
+
+@media (min-width: 300px) and (max-width: 800px) {
+  .string-entry {
+    margin: 0 10px 0 10px;
+  }
+  .string-entry .context-hover {
+    right: 50px;
+  }
+}

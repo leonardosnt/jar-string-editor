@@ -1,92 +1,16 @@
 .strings-container {
-  margin-top: 20px;
-  width: 100%;
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
-.strings-container .strings {
-  background: transparent;
-  width: 90%;
-  margin: auto;
-}
-
-/* Reset input style */
-input.string-input {
-  border: none;
-  background-image: none;
-  background-color: transparent;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-
-.strings-container .strings div.string-input {
-  cursor: pointer;
-}
-.strings-container .strings .string-input {
-  padding: 3px;
-
-  font-size: 1em;
-  width: calc(100% - 30px);
-  margin-right: 5px;
-  border: 1px solid rgba(0, 0, 0, .3);
-  background: white;
-  word-break: break-all;
-  word-wrap: break-word;
-}
-
-.strings-container .load-more-btn-container {
-  margin-top: 20px;
+.string-list {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 }
 
-.string-entry {
-  position: relative; /* for absolute child element */
-  margin-bottom: 4px;
-}
-
-.string-highlight {
-  font-weight: bold;
-  background: white;
-}
-
-.string-entry .context {
-  background: rgba(13, 13, 14, 0.1);
+.load-more-btn-container {
+  margin-top: 20px;
   display: flex;
-  position: absolute;
-  right: -7px;
-  top: 0;
-  width: 25px;
-  height: 100%;
-  cursor: help;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, .3);
-}
-
-/* We need to center it properly */
-.string-entry .context .icon {
-  padding: 3px;
-}
-
-.string-entry .context:hover + .context-hover {
-  display: block;
-}
-
-.string-entry .context-hover {
-  position: absolute;
-  display: none;
-  float: right;
-  background: white;
-  border-left: 1px solid rgb(206, 206, 207);
-  box-shadow: 0 2px 6px 0 rgba(13, 13, 14, 0.2);
-  padding: 10px;
-  right: 25px;
-  top: 0px;
-  z-index: 1000;
-}
-
-.string-entry .context-hover span {
-  display: block;
+  justify-content: center;
 }

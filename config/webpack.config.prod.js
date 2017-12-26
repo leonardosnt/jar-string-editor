@@ -126,11 +126,6 @@ module.exports = {
         ],
         include: paths.appSrc,
       },
-      // Used by SVGInliner
-      {
-        test: /\.svg$/,
-        loader: 'raw-loader',
-      },
       {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall

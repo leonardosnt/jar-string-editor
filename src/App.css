@@ -1,28 +1,40 @@
 .header {
-  margin: auto;
-  width: 90%;
+  display: flex;
+  margin: 0 50px 0 50px;
+  flex-direction: column;
+}
+
+@media (min-width: 300px) and (max-width: 800px) {
+  .header {
+    margin: 0 10px 0 10px;
+  }
+}
+
+.brand-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  user-select: none;
+  display: flex;
+  justify-content: center;
 }
 
 .brand {
-  margin-top: 40px;
-  margin-bottom: 40px;
   color: rgba(0, 0, 0, 0.8);
-  text-align: center;
   cursor: pointer;
-  user-select: none;
 }
 
 .search {
-  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
 }
+
 .search input {
-  font-size: 1em;
-  width: 100%;
+  flex: 1;
+  height: 20px;
 }
 
 .info {
   padding-top: 10px;
-  padding-bottom: 10px;
 }
 
 .save-btn {

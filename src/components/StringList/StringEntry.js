@@ -16,12 +16,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { Component } from 'react';
-import SVGInline from 'react-svg-inline';
 import HighlightWords from 'react-highlight-words';
 
 import { prettyMethodInfo } from '../../util/jct-util.js';
 
-import infoIcon from '../../icons/info.svg';
+import InfoIcon from '../../icons/info';
+
+import './StringEntry.css';
 
 export default class StringEntry extends Component {
   state = { focused: false };
@@ -96,7 +97,7 @@ export default class StringEntry extends Component {
       <div className="string-entry">
         {element}
         <div className="context">
-          <SVGInline className="icon" svg={infoIcon} />
+          <InfoIcon />
         </div>
         <StringContext context={string.context} />
       </div>
