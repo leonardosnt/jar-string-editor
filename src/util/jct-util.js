@@ -22,13 +22,13 @@ import { parseMethodDescriptor } from './descriptor-parser';
 /**
  * Get an attribute by name.
  *
- * @param {any} classFile - The class file
- * @param {any} target - Object you want get attribute from
+ * @param {ClassFile} classFile - The class file
+ * @param {any} source - Object you want get attribute from
  * @param {string} attributeName - Attribute name
  * @returns {any} - The attribute
  */
-export function getAttribute(classFile, target, attributeName) {
-  const attributes = target.attributes;
+export function getAttribute(classFile, source, attributeName) {
+  const { attributes } = source;
 
   if (attributes === undefined) {
     throw new Error('target does not have attributes');

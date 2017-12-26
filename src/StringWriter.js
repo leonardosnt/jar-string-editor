@@ -21,48 +21,62 @@ import { JavaClassFileReader, JavaClassFileWriter } from 'java-class-tools';
 
 export default class StringWriter {
   /**
-   * (Re)write the strings to the jar file
+   * (Re)write the strings to a jar file
    *
-   * @param {JSZip} jar
-   * @param {{ fileName: string, value: string, constantIndex: Number }[]} strings
-   * @returns {Promise<Blob>}
+   * @param {JSZip} jar - The jar file
+   * @param {{ fileName: string, value: string, constantIndex: Number }[]} strings - The strings
+   * @returns {Promise<Blob>} - A promise of the compressed jar file
    */
   static write(jar, strings) {
     const classWriter = new JavaClassFileWriter();
     const classReader = new JavaClassFileReader();
+
+    // We use this to cache the class files we already read.
     const classFileMap = new Map();
+    // Here we store ZipObject#async promises
     const promises = [];
 
     for (const { constantIndex, changed, fileName, value } of strings) {
+      // If the string was not changed, ignore it
       if (!changed) continue;
 
-      // Read and cache the class file
-      const cfPromise = classFileMap[fileName]
-        ? Promise.resolve(classFileMap[fileName]) // already exists
-        : (classFileMap[fileName] = jar
-            .file(fileName)
-            .async('arraybuffer')
-            .then(buf => classReader.read(buf))); // read and parse from jar
+      let classFilePromise;
 
-      cfPromise.then(classFile => {
+      if (classFileMap.has(fileName)) {
+        // We already read it
+        classFilePromise = classFileMap.get(fileName);
+      } else {
+        // Read the class from jar
+        classFilePromise = jar
+          .file(fileName)
+          .async('arraybuffer')
+          .then(buf => classReader.read(buf));
+        // Put in the cache
+        classFileMap.set(fileName, classFilePromise);
+      }
+
+      // After we read the class from the jar file
+      // we rewrite the string to it
+      classFilePromise.then(classFile => {
+        // Convert the string to bytes
         const stringBytes = stringToUtf8ByteArray(value);
         const utf8Entry =
           classFile.constant_pool[
             classFile.constant_pool[constantIndex].string_index
           ];
 
-        // Save in the constant_pool
+        // Replace the bytes in the constant_pool
         utf8Entry.length = stringBytes.length;
         utf8Entry.bytes = stringBytes;
 
-        // Write it back to the jar file
+        // Write the class file back to the jar
         jar.file(fileName, classWriter.write(classFile).buffer);
       });
 
-      promises.push(cfPromise);
+      promises.push(classFilePromise);
     }
 
-    // Wait all ZipObject#async's promises.
+    // We wait all ZipObject#async's promises then we re-compress the jar file
     return Promise.all(promises).then(() =>
       jar.generateAsync({ type: 'blob', compression: 'DEFLATE' })
     );

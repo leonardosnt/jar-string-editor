@@ -29,7 +29,7 @@ import { getInstructionContext } from './util/jct-util';
 import { stringContains } from './util/string-util';
 import { saveAs } from 'file-saver';
 
-import StringReader from './StringReader';
+import StringSearcher from './StringSearcher';
 import StringWriter from './StringWriter';
 import settings from './settings';
 
@@ -64,8 +64,8 @@ class App extends Component {
   }
 
   clearContext = () => {
-    if (this.stringReader) {
-      this.stringReader.stop();
+    if (this.stringSearcher) {
+      this.stringSearcher.stop();
     }
 
     this.setState({ context: { ...App.INITIAL_CONTEXT } });
@@ -89,7 +89,7 @@ class App extends Component {
   };
 
   onJarLoaded = (jar, selectedFileName) => {
-    const stringReader = (this.stringReader = new StringReader());
+    const stringSearcher = (this.stringSearcher = new StringSearcher());
     const foundStrings = [];
     const numClasses = jar.filter(path => path.endsWith('.class')).length;
     let stringId = 0;
@@ -104,7 +104,7 @@ class App extends Component {
       })
     );
 
-    stringReader.on(
+    stringSearcher.on(
       'found',
       ({
         fileName,
@@ -134,13 +134,13 @@ class App extends Component {
       }
     );
 
-    stringReader.on('read_count', num => {
+    stringSearcher.on('read_count', num => {
       this.setState({ loadInfo: `Procurando ${num}/${numClasses} classes` });
     });
 
-    stringReader.on('finish', () => {
+    stringSearcher.on('finish', () => {
       // We don't need this anymore
-      delete this.stringReader;
+      delete this.stringSearcher;
 
       this.setState(state =>
         update(state, {
@@ -152,7 +152,7 @@ class App extends Component {
       );
     });
 
-    stringReader.searchInJar(jar);
+    stringSearcher.searchInJar(jar);
   };
 
   onFileSelected = file => {

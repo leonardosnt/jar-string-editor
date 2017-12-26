@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS = {
   hideEmptyStrings: true,
 };
 
-/** Load from localStorage */
+// Load from localStorage
 function load() {
   // Safe load from localStorage.
   let settings;
@@ -32,14 +32,14 @@ function load() {
   return settings || DEFAULT_SETTINGS;
 }
 
-/** Save to localStorage */
+// Save to localStorage
 function save() {
   localStorage.setItem('jse-settings', JSON.stringify(this));
 
   observers.forEach(callback => callback());
 }
 
-/** Simple way to observe when settings is saved */
+// Simple way to observe when settings is saved
 function observe(listener) {
   observers.push(listener);
 }

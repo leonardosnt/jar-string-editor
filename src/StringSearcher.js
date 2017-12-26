@@ -17,6 +17,7 @@
 */
 
 import mitt from 'mitt';
+import { getAttribute } from './util/jct-util';
 import {
   JavaClassFileReader,
   Modifier,
@@ -25,6 +26,22 @@ import {
   ConstantType,
 } from 'java-class-tools';
 
+/**
+ * This class will emit the following events:
+ *
+ * - finish: when the searchInJar method finish reading all class files;
+ *
+ * - found: when a string is found. The payload from this event will follow this format:
+ * @example
+ * {
+ *  fileName: string,
+ *  classFile: ClassFile,
+ *  method: MethodInfo,
+ *  instructions: Instruction[],
+ *  instructionIndex: Number,
+ *  constantIndex: Number
+ * }
+ */
 export default class StringReader {
   constructor() {
     Object.assign(this, mitt());
@@ -32,11 +49,16 @@ export default class StringReader {
     this._stopped = false;
   }
 
+  /**
+   * Stop the searcher
+   */
   stop() {
     this._stopped = true;
   }
 
   /**
+   * Search in all classes from the jar file.
+   *
    * @param {JSZip} jar - The jar file
    */
   searchInJar(jar) {
@@ -46,59 +68,69 @@ export default class StringReader {
      * We process it sequentially to use less memory (jszip use a lot of memory) and to
      * be able to 'give feedback to the UI' (like, how many class files was read).
      *
-     * It's like 'promise serieS'
+     * It's like 'promise series'
      */
     let currentClassIdx = 0;
 
     const processNext = () => {
-      let nextFile = classes[currentClassIdx++];
+      const currentClassFile = classes[currentClassIdx++];
 
-      if (nextFile === undefined || this._stopped) {
+      // If currentClassFile is undefined it means we are done
+      if (currentClassFile === undefined || this._stopped) {
         this.emit('finish');
         return;
       }
 
-      nextFile
+      // Unzip the class file and search on it
+      currentClassFile
         .async('arraybuffer')
-        .then(classData => this.searchInClass(nextFile.name, classData))
+        .then(classData => this.searchInClass(currentClassFile.name, classData))
         .then(() => processNext());
 
+      // Every 100 (currently hardcoded) classes we emit an event
+      // to update the UI
       if (currentClassIdx && currentClassIdx % 100 === 0) {
         this.emit('read_count', currentClassIdx);
       }
     };
 
+    // Start processing the classes
     processNext();
   }
 
   /**
-   * @param {string} fileName
+   * Search all strings in a class file.
+   *
+   * @param {string} fileName - The file name (only used to indentify where the string was found
+   *  -- we use this to avoid read the class name)
    * @param {Buffer|ArrayBuffer|Uint8Array} classData - Class data
    */
   searchInClass(fileName, classData) {
     const classFile = this._classReader.read(classData);
+    /**
+     * Here we store the constantIndex of the strings we already found.
+     * It's used because the same string can be referenced many times in different methods.
+     */
     const alreadyMappedStrings = new Set();
 
+    // Loop through all methods
     classFile.methods
+      // Ignore abstract methods since it does not have code
       .filter(method => (method.access_flags & Modifier.ABSTRACT) === 0)
       .forEach(method => {
-        const codeAttribute = method.attributes.filter(attr => {
-          const attributeNameBytes =
-            classFile.constant_pool[attr.attribute_name_index].bytes;
-          return (
-            attributeNameBytes.length === 4 &&
-            String.fromCharCode.apply(null, attributeNameBytes) === 'Code'
-          );
-        })[0];
+        // Get the 'Code' attribute from method
+        const codeAttribute = getAttribute(classFile, method, 'Code');
 
+        // If the attribute does not exist or it is empty we ignore it.
         if (codeAttribute === undefined || codeAttribute.length === 0) {
           return;
         }
 
+        // Parse the bytecode from the code attribute
         const instructions = InstructionParser.fromBytecode(codeAttribute.code);
 
-        // Loop trough all instructions of this method
-        for (var i = 0; i < instructions.length; i++) {
+        // Loop through all instructions of the method
+        for (let i = 0; i < instructions.length; i++) {
           const { opcode, operands } = instructions[i];
 
           // We only want LDC_W & LDC instructions
@@ -106,6 +138,8 @@ export default class StringReader {
             continue;
           }
 
+          // The index of the constant in constant_pool. If the opcode is LDC_W,
+          // the index will be 2 bytes long.
           const constantIndex =
             opcode === Opcode.LDC
               ? operands[0]
@@ -113,12 +147,13 @@ export default class StringReader {
 
           const constantEntry = classFile.constant_pool[constantIndex];
 
-          // Is this a string constant?
+          // We only want string constants
           if (constantEntry.tag !== ConstantType.STRING) {
             continue;
           }
 
           // Check if this string was already mapped.
+          // If it is, that means we already emitted an event for it
           if (alreadyMappedStrings.has(constantIndex)) {
             continue;
           }
@@ -131,6 +166,8 @@ export default class StringReader {
             instructionIndex: i,
             constantIndex,
           });
+
+          // 'Mark' as found
           alreadyMappedStrings.add(constantIndex);
         }
       });
