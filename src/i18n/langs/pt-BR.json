@@ -13,7 +13,7 @@
   },
   "app": {
     "created_by": "Criado com muito {{coffee}} por {{link}}.",
-    "old_version": "Não gostou a nova versão? Clique aqui para usar a antiga.",
+    "old_version": "Não gostou da nova versão? Clique aqui para usar a antiga.",
     "search": "Pesquisar",
     "save": "Salvar",
     "strings_info": "{{found}} strings encontradas | {{after_filter}} após filtro ({{took}}ms)",
