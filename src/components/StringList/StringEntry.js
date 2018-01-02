@@ -23,6 +23,7 @@ import { prettyMethodInfo } from '../../util/jct-util.js';
 import InfoIcon from '../../icons/info';
 
 import './StringEntry.css';
+import { translate } from '../../i18n/i18n';
 
 export default class StringEntry extends Component {
   state = { focused: false };
@@ -108,14 +109,20 @@ export default class StringEntry extends Component {
 const StringContext = ({ context }) => (
   <div className="context-hover">
     <span>
-      Classe: <b>{context.className}</b>
+      {translate('app.string_context.class', {
+        className: <b>{context.className}</b>,
+      })}
     </span>
     <span>
-      Método: <b>{prettyMethodInfo(context.method)}</b>
+      {translate('app.string_context.method', {
+        method: <b>{prettyMethodInfo(context.method)}</b>,
+      })}
     </span>
     {context.lineNumber && (
       <span>
-        Linha: <b>{context.lineNumber}</b>
+        {translate('app.string_context.line', {
+          lineNumber: <b>{context.lineNumber}</b>,
+        })}
       </span>
     )}
   </div>

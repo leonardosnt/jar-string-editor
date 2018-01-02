@@ -27,6 +27,7 @@ import { Button, SettingsPanel, FileSelector, StringList } from './components';
 import { getInstructionContext } from './util/jct-util';
 import { stringContains } from './util/string-util';
 import { saveAs } from 'file-saver';
+import { translate } from './i18n/i18n';
 
 import StringSearcher from './StringSearcher';
 import StringWriter from './StringWriter';
@@ -254,16 +255,19 @@ class App extends Component {
       <div>
         <div className="header">
           <div className="search">
-            <div>Pesquisar</div>
+            <div>{translate('app.search')}</div>
             <input onChange={this.onSearchChange} />
           </div>
           <div className="info">
             <span>
-              {context.strings.length} strings encontradas | {filtered.length}{' '}
-              após filtro (Levou {took.toFixed(2)} ms)
+              {translate('app.strings_info', {
+                took: took.toFixed(2),
+                found: context.strings.length,
+                after_filter: filtered.length,
+              })}
             </span>
             <Button onClick={this.onSaveFile} className="save-btn">
-              Salvar
+              {translate('app.save')}
             </Button>
           </div>
         </div>
@@ -274,6 +278,20 @@ class App extends Component {
   }
 }
 
+const Link = props => (
+  <a
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      color: 'rgba(0,0,0,.9)',
+      textDecoration: 'none',
+    }}
+    {...props}
+  >
+    {props.children}
+  </a>
+);
+
 const Footer = () => (
   <div
     style={{
@@ -283,36 +301,16 @@ const Footer = () => (
       color: 'rgba(0,0,0,.8)',
     }}
   >
-    {'Feito com muito '}
-    <CoffeIcon />
-    {' por '}
-    <a
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        color: 'rgba(0,0,0,.9)',
-        textDecoration: 'none',
-      }}
-      href="https://github.com/leonardosnt"
-    >
-      leonardosnt
-    </a>
-    {'.'}
-    {'   '}
-    <div style={{ paddingTop: '.6em' }}>
+    {translate('app.created_by', {
+      coffee: <CoffeIcon />,
+      link: <Link href="https://github.com/leonardosnt">leonardosnt</Link>,
+    })}
+
+    <div style={{ paddingTop: '.6em', fontSize: '.75em' }}>
       <b>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: 'rgba(0,0,0,.9)',
-            textDecoration: 'none',
-            fontSize: '.75em',
-          }}
-          href="https://jar-string-editor-v1.now.sh/"
-        >
-          Não gostou a nova versão? Clique aqui para usar a antiga.
-        </a>
+        <Link href="https://jar-string-editor-v1.now.sh/">
+          {translate('app.old_version')}
+        </Link>
       </b>
     </div>
   </div>

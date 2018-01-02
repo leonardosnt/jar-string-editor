@@ -60,3 +60,17 @@
 .settings-container label {
   user-select: none;
 }
+
+
+.option {
+  display: flex;
+  justify-content: flex-end
+}
+
+.option .option-right {
+  margin-right: auto;
+}
+
+.option select {
+  display: flex;
+}

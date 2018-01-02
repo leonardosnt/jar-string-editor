@@ -19,34 +19,31 @@
 import React, { Component } from 'react';
 
 import settings from '../../settings';
+import { translate, languages, getCurrentLanguage } from '../../i18n/i18n';
 
 import SettingsOpenIcon from '../../icons/settings-open';
 import SettingsCloseIcon from '../../icons/settings-close';
-
+import CheckboxOption from './CheckboxOption';
+import SelectorOption from './SelectorOption';
 import { Button } from '../';
 
 import './SettingsPanel.css';
 
-class CheckboxOption extends Component {
-  onChange = ({ target }) => {
-    this.props.persistTo[this.props.persistKey] = target.checked;
-  };
+const HideEmptyStringsOption = () => (
+  <CheckboxOption persistTo={settings} persistKey={'hideEmptyStrings'}>
+    {translate('settings.hide_empty_strings')}
+  </CheckboxOption>
+);
 
-  render() {
-    return (
-      <section>
-        <label style={{ cursor: 'pointer' }}>
-          <input
-            onChange={this.onChange}
-            defaultChecked={this.props.persistTo[this.props.persistKey]}
-            type="checkbox"
-          />
-          {this.props.children}
-        </label>
-      </section>
-    );
-  }
-}
+const LanguageSelectorOption = () => (
+  <SelectorOption
+    options={Object.keys(languages)}
+    label={translate('settings.select_language')}
+    defaultValue={getCurrentLanguage()}
+    persistTo={settings}
+    persistKey={'language'}
+  />
+);
 
 export default class SettingsPanel extends Component {
   state = { hidden: true };
@@ -77,19 +74,16 @@ export default class SettingsPanel extends Component {
 
         <div className={'sidebar' + (hidden ? ' hidden' : '')}>
           <div className="settings-wrapper">
-            <h4>Configurações</h4>
+            <h4>{translate('settings.title')}</h4>
 
-            <CheckboxOption
-              persistTo={settings}
-              persistKey={'hideEmptyStrings'}
-            >
-              Ocultar strings vazias.
-            </CheckboxOption>
+            <HideEmptyStringsOption />
+            <hr />
+            <LanguageSelectorOption />
           </div>
 
           <div className="actions">
             <Button onClick={this.onSave} className="done-btn">
-              Salvar
+              {translate('settings.apply')}
             </Button>
           </div>
         </div>

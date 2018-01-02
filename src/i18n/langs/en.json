@@ -1,0 +1,26 @@
+{
+  "file_selector": {
+    "select": "Click to select a file or drag it here.",
+    "failed_to_load": "Failed to load the selected file.",
+    "not_a_jar_file": "The selected file is not a valid jar file.",
+    "loading": "Loading file..."
+  },
+  "settings": {
+    "select_language": "Select language",
+    "hide_empty_strings": "Hide empty strings.",
+    "title": "Settings",
+    "apply": "Apply"
+  },
+  "app": {
+    "created_by": "Created with a lot of {{coffee}} by {{link}}.",
+    "old_version": "Didn't like the new version? Click here to use the old one.",
+    "search": "Search",
+    "save": "Save",
+    "strings_info": "{{found}} strings found | {{after_filter}} after filter ({{took}}ms)",
+    "string_context": {
+      "class": "Class: {{className}}",
+      "method": "Method: {{method}}",
+      "line": "Line Number: {{lineNumber}}"
+    }
+  }
+}

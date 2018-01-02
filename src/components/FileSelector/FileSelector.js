@@ -18,19 +18,85 @@
 
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
-
+import { translate } from '../../i18n/i18n';
 import UploadSvg from '../../icons/upload';
 
 import './FileSelector.css';
 
 export default class FileSelector extends Component {
   state = {
-    message: 'Clique para selecionar ou arraste e solte o arquivo aqui.',
+    status: 'SELECT',
+  };
+
+  renderDropzone = ({
+    isDragActive,
+    isDragReject,
+    acceptedFiles,
+    rejectedFiles,
+  }) => {
+    let { status } = this.state;
+
+    if (rejectedFiles.length) {
+      status = 'NOT_A_JAR_FILE';
+    }
+
+    if (acceptedFiles.length) {
+      const [file] = acceptedFiles;
+
+      status = 'LOADING_FILE';
+
+      // We only care about the catch because we want to show an
+      // error to the user if we can't load the file.
+      this.props.onSelected(file).catch(e => {
+        this.setState({ status: 'FAILED_TO_LOAD', error: e });
+      });
+
+      // Clear accepted files
+      acceptedFiles.length = 0;
+    }
+
+    return (
+      <div>
+        <UploadSvg />
+        {this.renderStatusMessage(status)}
+      </div>
+    );
+  };
+
+  renderStatusMessage = status => {
+    switch (status) {
+      case 'LOADING_FILE':
+        return <p>{translate('file_selector.loading')}</p>;
+
+      case 'NOT_A_JAR_FILE':
+        return (
+          <p className="msg-danger">
+            {translate('file_selector.not_a_jar_file')}
+          </p>
+        );
+
+      case 'FAILED_TO_LOAD':
+        return (
+          <span>
+            <p className="msg-danger">
+              {translate('file_selector.failed_to_load')}
+            </p>
+            {this.state.error && (
+              <p className="msg-danger">{this.state.error.message}</p>
+            )}
+          </span>
+        );
+
+      case 'SELECT':
+        return <p>{translate('file_selector.select')}</p>;
+
+      // Should never reach here
+      default:
+        return <p>{status}</p>;
+    }
   };
 
   render() {
-    let message = this.state.message;
-
     const dropzoneProps = {
       // Remove styles from Dropzone
       disabledStyle: {},
@@ -46,52 +112,7 @@ export default class FileSelector extends Component {
 
     return (
       <div className="file-selector">
-        <Dropzone {...dropzoneProps}>
-          {({ isDragActive, isDragReject, acceptedFiles, rejectedFiles }) => {
-            if (rejectedFiles.length) {
-              const [file] = rejectedFiles;
-              message = (
-                <p className="msg-danger">
-                  O arquivo selecionado (
-                  <b>{file.name}</b>
-                  ) não é um arquivo <b>.jar</b>
-                  .
-                </p>
-              );
-            }
-
-            if (acceptedFiles.length) {
-              const [file] = acceptedFiles;
-
-              message = 'Carregando arquivo';
-
-              // We only care about the catch because we want to show an
-              // error to the user if we can't load the file.
-              this.props.onSelected(file).catch(e => {
-                this.setState({
-                  message: (
-                    <span>
-                      <p className="msg-danger">
-                        Não foi possível carregar o arquivo <b>{file.name}</b>.
-                      </p>
-                      <p className="msg-danger">{e.message}</p>
-                    </span>
-                  ),
-                });
-              });
-
-              // Clear accepted files
-              acceptedFiles.length = 0;
-            }
-
-            return (
-              <div>
-                <UploadSvg />
-                {typeof message === 'string' ? <p>{message}</p> : message}
-              </div>
-            );
-          }}
-        </Dropzone>
+        <Dropzone {...dropzoneProps}>{this.renderDropzone}</Dropzone>
       </div>
     );
   }
