@@ -17,15 +17,46 @@
 */
 
 /**
+ * Parse a field descriptor
+ *
+ * @see https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.3.2
  * @param {String} descriptor - The descriptor
  * @return {{ type: String, value: String }} - The parsed descriptor
  */
 export function parseFieldType(descriptor) {
-  let ch = descriptor[0];
-  let value;
-  let idx = 1;
+  let [char] = descriptor;
+  let charIndex = 1;
 
-  switch (ch) {
+  if (char === 'L') {
+    const classNameEnd = descriptor.indexOf(';', charIndex);
+    return {
+      type: 'class',
+      value: descriptor.substring(charIndex, classNameEnd),
+    };
+  }
+
+  // ArrayType
+  if (char === '[') {
+    let dimensions = 1;
+
+    while (descriptor[charIndex++] === '[') {
+      dimensions++;
+    }
+
+    const arrayType = parseFieldType(descriptor.substring(charIndex - 1));
+
+    return {
+      type: 'array',
+      dimensions,
+      arrayType,
+      value: arrayType.value + '[]'.repeat(dimensions),
+    };
+  }
+
+  // BaseType
+  let value;
+
+  switch (char) {
     case 'B':
       value = 'byte';
       break;
@@ -51,35 +82,21 @@ export function parseFieldType(descriptor) {
       value = 'boolean';
       break;
 
-    case 'L': {
-      value = '';
-      // eslint-disable-next-line
-      while ((ch = descriptor[idx++]) !== ';') value += ch === '/' ? '.' : ch;
-      return { type: 'class', value: value };
-    }
-
-    case '[': {
-      let dimensions = 1;
-
-      while (descriptor[idx++] === '[') dimensions++;
-
-      let arrayType = parseFieldType(descriptor.substring(idx - 1));
-
-      return {
-        type: 'array',
-        dimensions,
-        arrayType,
-        value: arrayType.value + '[]'.repeat(dimensions),
-      };
-    }
-
     default:
-      throw new Error(`Invalid descriptor. ch=${ch}, descriptor=${descriptor}`);
+      throw new Error(
+        `Invalid descriptor. ch=${char}, descriptor=${descriptor}`
+      );
   }
 
   return { type: 'primitive', value };
 }
 
+/**
+ * Return the size of a fieldType
+ * @param {*} fieldType
+ * @see parseFieldType(descriptor)
+ * @return {Number}
+ */
 function sizeOfType(fieldType) {
   switch (fieldType.type) {
     case 'primitive':
@@ -94,22 +111,25 @@ function sizeOfType(fieldType) {
 }
 
 /**
+ * Parse a method descriptor
+ *
+ * @see https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.3.3
  * @param {String} descriptor
  * @returns {{ parameters: { type: String, value: String }[], returnType: { type: String, value: String } }}
  */
 export function parseMethodDescriptor(descriptor) {
   const parameters = [];
-  let idx = 1;
-  let ch = descriptor[idx];
+  let charIndex = 1; // Ignore (
+  let char = descriptor[charIndex];
 
-  while (ch !== undefined && ch !== ')') {
-    let fieldType = parseFieldType(descriptor.substring(idx));
-    idx += sizeOfType(fieldType);
-    ch = descriptor[idx];
+  while (char !== undefined && char !== ')') {
+    const fieldType = parseFieldType(descriptor.substring(charIndex));
+    charIndex += sizeOfType(fieldType);
+    char = descriptor[charIndex];
     parameters.push(fieldType);
   }
 
-  const returnType = descriptor.substring(++idx);
+  const returnType = descriptor.substring(++charIndex);
   return {
     parameters,
     returnType:

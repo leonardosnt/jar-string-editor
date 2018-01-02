@@ -41,9 +41,9 @@ export function getAttribute(classFile, source, attributeName) {
 }
 
 /**
- * @param {*} classFile
- * @param {*} method
- * @param {*} instruction
+ * @param {ClassFile} classFile
+ * @param {MethodInfo} method
+ * @param {Instruction} instruction
  * @return {{ method: { name: String, descriptor: String }, className: String, lineNumber?: String }}
  */
 export function getInstructionContext(classFile, method, instruction) {
