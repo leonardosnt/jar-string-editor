@@ -40,18 +40,6 @@ function load() {
   return settings || DEFAULT_SETTINGS;
 }
 
-// Save to localStorage
-function save() {
-  localStorage.setItem('jse-settings', JSON.stringify(this));
-
-  observers.forEach(callback => callback());
-}
-
-// Simple way to observe when settings is saved
-function observe(listener) {
-  observers.push(listener);
-}
-
 function copyDefaults(from, to) {
   for (const key in from) {
     if (from[key] !== null && typeof from[key] === 'object') {
@@ -64,10 +52,25 @@ function copyDefaults(from, to) {
   }
 }
 
+// Save to localStorage
+function save() {
+  observers.forEach(callback => callback(oldSettings));
+  oldSettings = { ...settings };
+  localStorage.setItem('jse-settings', JSON.stringify(this));
+}
+
+// Simple way to observe when settings is saved
+function observe(listener) {
+  observers.push(listener);
+}
+
 const observers = [];
 const settings = load();
 
 settings.save = save.bind(settings);
 settings.observe = observe.bind(settings);
+
+// Used in observers
+let oldSettings = { ...settings };
 
 export default settings;

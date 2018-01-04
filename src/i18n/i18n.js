@@ -73,7 +73,7 @@ for (const lang in languages) {
   }
 }
 
-// Warns if a key exists in an lang but not in another
+// Warns if a key exists in a language but not in another
 if (process.env.NODE_ENV === 'development') {
   const visitedKeys = {};
   const allLangs = [];

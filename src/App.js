@@ -318,4 +318,9 @@ const Footer = () => (
 
 window.__BUILD_INFO__ = process.env.__BUILD_INFO__;
 
+settings.observe(oldSettings => {
+  if (oldSettings.language === settings.language || !window.ga) return;
+  window.ga('send', 'event', 'language', 'change', settings.language);
+});
+
 export default App;
