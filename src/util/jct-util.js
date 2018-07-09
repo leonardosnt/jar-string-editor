@@ -90,7 +90,7 @@ export function prettyMethodInfo({ name, descriptor }) {
     .map(
       p =>
         p.value.replace(
-          'java.lang.',
+          'java/lang/',
           ''
         ) /* remove java.lang package if present */
     )
