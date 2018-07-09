@@ -17,7 +17,7 @@
 */
 
 const compile = text => {
-  const parts = [];
+  const tokens = [];
   const vars = [];
   let pos = -1;
   let lastSubstring = 0;
@@ -50,9 +50,9 @@ const compile = text => {
         const varName = text.substring(varNameStart, varNameEnd);
 
         // include the text before the variable
-        parts.push(text.substring(lastSubstring, varNameStart - 2));
+        tokens.push(text.substring(lastSubstring, varNameStart - 2));
         // include the variable
-        parts.push({ varName });
+        tokens.push({ varName });
 
         lastSubstring = varNameEnd + 2;
 
@@ -61,7 +61,7 @@ const compile = text => {
     }
   }
   // cut the rest
-  parts.push(text.substring(lastSubstring, text.length));
+  tokens.push(text.substring(lastSubstring, text.length));
 
   // If there's no vars, we don't need to create a function
   if (vars.length === 0) {
@@ -69,36 +69,26 @@ const compile = text => {
   }
 
   /**
-   * Convert parts to array values (valid js objects)
+   * Convert tokens to an array js values
    * E.g
    *  ['Hello, ', {varName: 'name'}] ==> ['Hello, ', vars['name']]
    */
-  const arrayValues = parts
-    .map(part => {
-      if (part.varName) {
-        return `vars['${part.varName}']`;
+  const arrayValues = tokens
+    .map(token => {
+      if (token.varName) {
+        // (vars['varName'] || '{{varName}}')
+        return `(vars['${token.varName}'] || '{{${token.varName}}}')`;
       }
-      return `'${part}'`;
+      // string
+      return `'${token}'`;
     })
     .join(', ');
-
-  // Generate if(vars[varName] == undefined) vars[varName] = '{{varName}}';
-  const genSanitize = () =>
-    vars
-      .map(
-        varName =>
-          `if (vars['${varName}'] == undefined) vars['${varName}'] = '{{${varName}}}';`
-      )
-      .join('\n  ');
 
   /* eslint-disable no-new-func */
   return new Function(
     'vars',
     `
     vars = vars || {};
-
-    ${genSanitize()}
-
     return [${arrayValues}];
   `
   );
