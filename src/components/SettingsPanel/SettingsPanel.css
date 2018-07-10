@@ -6,8 +6,7 @@
 .settings-container .sidebar .actions .done-btn {
   position: fixed;
   bottom: 14px;
-  margin-inline-start: 250px;
-
+  right: 40px;
 }
 
 .settings-container .sidebar .done-btn:hover {

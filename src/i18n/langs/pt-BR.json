@@ -9,7 +9,17 @@
     "select_language": "Selecionar idioma",
     "hide_empty_strings": "Ocultar strings vazias.",
     "title": "Configurações",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "sort_by_context": {
+      "desc": "Ordenar por relevância",
+      "order_desc": "Ordem de relevância:",
+      "order_item": {
+        "send_message": "SendMessage - Mensagens enviadas para o jogador.",
+        "item_display_name": "ItemDisplayName - Nome de exibição de items."
+      }
+    },
+    "general": "Geral",
+    "bukkit_specific": "Específico do Bukkit"
   },
   "app": {
     "created_by": "Criado com muito {{coffee}} por {{link}}.",
@@ -17,10 +27,11 @@
     "search": "Pesquisar",
     "save": "Salvar",
     "strings_info": "{{found}} strings encontradas | {{after_filter}} após filtro ({{took}}ms)",
-    "string_context": {
+    "string_info": {
       "class": "Classe: {{className}}",
       "method": "Método: {{method}}",
-      "line": "Linha: {{lineNumber}}"
+      "line": "Linha: {{lineNumber}}",
+      "context": "Contexto: {{context}}"
     }
   }
 }

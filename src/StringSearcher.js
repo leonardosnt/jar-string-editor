@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 leonardosnt (leonrdsnt@gmail)
+ *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,11 @@
 */
 
 import mitt from 'mitt';
-import { getAttribute } from './util/jct-util';
+import {
+  getAttribute,
+  extractClassName,
+  extractMethodInfoConstants,
+} from './util/jct-util';
 import {
   JavaClassFileReader,
   Modifier,
@@ -39,7 +43,8 @@ import {
  *  method: MethodInfo,
  *  instructions: Instruction[],
  *  instructionIndex: Number,
- *  constantIndex: Number
+ *  constantIndex: Number,
+ *  context: string
  * }
  */
 export default class StringReader {
@@ -65,8 +70,8 @@ export default class StringReader {
     const classes = jar.filter(path => path.endsWith('.class'));
 
     /**
-     * We process it sequentially to use less memory (jszip use a lot of memory) and to
-     * be able to 'give feedback to the UI' (like, how many class files was read).
+     * We process the classe sequentially to use less memory (jszip use a lot of memory) and to
+     * be able to 'give feedback to the UI' (i.e. display how many class files has been read).
      *
      * It's like 'promise series'
      */
@@ -107,6 +112,8 @@ export default class StringReader {
    */
   searchInClass(fileName, classData) {
     const classFile = this._classReader.read(classData);
+    const constantPool = classFile.constant_pool;
+
     /**
      * Here we store the constantIndex of the strings we already found.
      * It's used because the same string can be referenced many times in different methods.
@@ -145,7 +152,7 @@ export default class StringReader {
               ? operands[0]
               : (operands[0] << 8) | operands[1]; // LDC_W
 
-          const constantEntry = classFile.constant_pool[constantIndex];
+          const constantEntry = constantPool[constantIndex];
 
           // We only want string constants
           if (constantEntry.tag !== ConstantType.STRING) {
@@ -165,11 +172,47 @@ export default class StringReader {
             instructions,
             instructionIndex: i,
             constantIndex,
+            context: this._getStringContext(constantPool, instructions, i),
           });
 
           // 'Mark' as found
           alreadyMappedStrings.add(constantIndex);
         }
       });
+  }
+
+  /**
+   * TODO: move to another place?
+   * @param {ConstantPoolInfo[]} constantPool
+   * @param {Instruction[]} instructions
+   * @param {number} index - Index in instructions
+   */
+  _getStringContext(constantPool, instructions, index) {
+    const nextInstruction = instructions[index + 1];
+
+    if (nextInstruction.opcode === Opcode.INVOKEINTERFACE) {
+      const operands = nextInstruction.operands;
+      const index = (operands[0] << 8) | operands[1];
+      const methodRef = constantPool[index];
+      const className = extractClassName(methodRef.class_index, constantPool);
+      const { name, descriptor } = extractMethodInfoConstants(
+        methodRef.name_and_type_index,
+        constantPool
+      );
+
+      const fullMethodDesc = `${className}#${name}${descriptor}`;
+
+      switch (fullMethodDesc) {
+        case 'org/bukkit/command/CommandSender#sendMessage(Ljava/lang/String;)V':
+        case 'org/bukkit/entity/Player#sendMessage(Ljava/lang/String;)V':
+          return 'SendMessage';
+
+        case 'org/bukkit/inventory/meta/ItemMeta#setDisplayName(Ljava/lang/String;)V':
+          return 'ItemDisplayName';
+
+        default:
+          return undefined;
+      }
+    }
   }
 }

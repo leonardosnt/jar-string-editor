@@ -30,7 +30,7 @@ input.string-input {
   word-wrap: break-word;
 }
 
-.string-entry .context {
+.string-entry .string-info {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,14 +40,9 @@ input.string-input {
   background: rgba(13, 13, 14, 0.1);
 }
 
-.string-entry .context:hover + .context-hover {
-  display: block;
-}
-
-.string-entry .context-hover {
+.string-entry .string-info-tooltip {
   position: absolute;
   display: none;
-  float: right;
   background: white;
   border-left: 1px solid rgb(206, 206, 207);
   box-shadow: 0 2px 6px 0 rgba(13, 13, 14, 0.2);
@@ -56,7 +51,15 @@ input.string-input {
   z-index: 1000;
 }
 
-.string-entry .context-hover span {
+.string-entry .string-info-tooltip:hover {
+  display: block;
+}
+
+.string-entry .string-info:hover + .string-info-tooltip {
+  display: block;
+}
+
+.string-entry .string-info-tooltip span {
   display: block;
 }
 
@@ -64,7 +67,7 @@ input.string-input {
   .string-entry {
     margin: 0 10px 0 10px;
   }
-  .string-entry .context-hover {
+  .string-entry .string-info-tooltip {
     right: 50px;
   }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 leonardosnt (leonrdsnt@gmail)
+ *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -62,12 +62,12 @@ export default class StringEntry extends Component {
   };
 
   render() {
-    const { focused } = this.state;
     const { string } = this.props;
+    const { value, highlightWords } = string;
 
     let element;
 
-    if (!string.highlightWords || focused) {
+    if (!highlightWords || this.state.focused) {
       element = (
         <input
           onInput={this.onInput}
@@ -77,7 +77,7 @@ export default class StringEntry extends Component {
           onBlur={this.onInputBlur}
           type="text"
           className="string-input"
-          defaultValue={string.value}
+          defaultValue={value}
         />
       );
     } else {
@@ -86,9 +86,9 @@ export default class StringEntry extends Component {
         <div onClick={this.onDivClick} className="string-input">
           <HighlightWords
             highlightClassName={'string-highlight'}
-            searchWords={string.highlightWords}
+            searchWords={highlightWords}
             autoEscape={true}
-            textToHighlight={string.value}
+            textToHighlight={value}
           />
         </div>
       );
@@ -97,31 +97,38 @@ export default class StringEntry extends Component {
     return (
       <div className="string-entry">
         {element}
-        <div className="context">
+        <div className="string-info">
           <InfoIcon />
         </div>
-        <StringContext context={string.context} />
+        <StringInfo string={string} />
       </div>
     );
   }
 }
 
-const StringContext = ({ context }) => (
-  <div className="context-hover">
+const StringInfo = ({ string: { location, context } }) => (
+  <div className="string-info-tooltip">
     <span>
-      {translate('app.string_context.class', {
-        className: <b>{context.className}</b>,
+      {translate('app.string_info.class', {
+        className: <b>{location.className}</b>,
       })}
     </span>
     <span>
-      {translate('app.string_context.method', {
-        method: <b>{prettyMethodInfo(context.method)}</b>,
+      {translate('app.string_info.method', {
+        method: <b>{prettyMethodInfo(location.method)}</b>,
       })}
     </span>
-    {context.lineNumber && (
+    {location.lineNumber && (
       <span>
-        {translate('app.string_context.line', {
-          lineNumber: <b>{context.lineNumber}</b>,
+        {translate('app.string_info.line', {
+          lineNumber: <b>{location.lineNumber}</b>,
+        })}
+      </span>
+    )}
+    {context && (
+      <span>
+        {translate('app.string_info.context', {
+          context: <b>{context}</b>,
         })}
       </span>
     )}

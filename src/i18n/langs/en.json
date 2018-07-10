@@ -9,7 +9,17 @@
     "select_language": "Select language",
     "hide_empty_strings": "Hide empty strings.",
     "title": "Settings",
-    "apply": "Apply"
+    "apply": "Apply",
+    "sort_by_context": {
+      "desc": "Order by relevance",
+      "order_desc": "Order of relevance:",
+      "order_item": {
+        "send_message": "SendMessage - The messages sent to a player.",
+        "item_display_name": "ItemDisplayName - The display name of an item."
+      }
+    },
+    "general": "General",
+    "bukkit_specific": "Bukkit-specific"
   },
   "app": {
     "created_by": "Created with a lot of {{coffee}} by {{link}}.",
@@ -17,10 +27,11 @@
     "search": "Search",
     "save": "Save",
     "strings_info": "{{found}} strings found | {{after_filter}} after filter ({{took}}ms)",
-    "string_context": {
+    "string_info": {
       "class": "Class: {{className}}",
       "method": "Method: {{method}}",
-      "line": "Line Number: {{lineNumber}}"
+      "line": "Line Number: {{lineNumber}}",
+      "context": "Contexto: {{context}}"
     }
   }
 }

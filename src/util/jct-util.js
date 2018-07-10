@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 leonardosnt (leonrdsnt@gmail)
+ *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import { utf8ByteArrayToString } from 'utf8-string-bytes';
 import { parseMethodDescriptor } from './descriptor-parser';
 
 /**
- * Get an attribute by name.
+ * Get an attribute by its name.
  *
  * @param {ClassFile} classFile - The class file
  * @param {any} source - Object you want get attribute from
@@ -46,7 +46,7 @@ export function getAttribute(classFile, source, attributeName) {
  * @param {Instruction} instruction
  * @return {{ method: { name: String, descriptor: String }, className: String, lineNumber?: String }}
  */
-export function getInstructionContext(classFile, method, instruction) {
+export function getInstructionLocation(classFile, method, instruction) {
   const className = extractClassName(
     classFile.this_class,
     classFile.constant_pool
@@ -103,7 +103,11 @@ export function extractClassName(index, constant_pool) {
   return getUtf8String(constant_pool, constant_pool[index].name_index);
 }
 
-export function extractMethodInfoConstants(methodInfo, constant_pool) {
+export function extractMethodInfoConstants(methodInfoOrIndex, constant_pool) {
+  const methodInfo =
+    typeof methodInfoOrIndex === 'number'
+      ? constant_pool[methodInfoOrIndex]
+      : methodInfoOrIndex;
   return {
     name: getUtf8String(constant_pool, methodInfo.name_index),
     descriptor: getUtf8String(constant_pool, methodInfo.descriptor_index),

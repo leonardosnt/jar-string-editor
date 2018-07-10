@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 leonardosnt (leonrdsnt@gmail)
+ *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -32,6 +32,21 @@ import './SettingsPanel.css';
 const HideEmptyStringsOption = () => (
   <CheckboxOption persistTo={settings} persistKey={'hideEmptyStrings'}>
     {translate('settings.hide_empty_strings')}
+  </CheckboxOption>
+);
+
+const SortByContextOption = () => (
+  <CheckboxOption persistTo={settings} persistKey={'sortByContext'}>
+    {translate('settings.sort_by_context.desc')}
+    <small style={{ display: 'block', marginLeft: 5, marginTop: 5 }}>
+      {translate('settings.sort_by_context.order_desc')}
+      <ul style={{ paddingLeft: 30 }}>
+        <li>{translate('settings.sort_by_context.order_item.send_message')}</li>
+        <li>
+          {translate('settings.sort_by_context.order_item.item_display_name')}
+        </li>
+      </ul>
+    </small>
   </CheckboxOption>
 );
 
@@ -76,9 +91,15 @@ export default class SettingsPanel extends Component {
           <div className="settings-wrapper">
             <h4>{translate('settings.title')}</h4>
 
+            <h5>{translate('settings.general')}</h5>
+
             <HideEmptyStringsOption />
             <hr />
             <LanguageSelectorOption />
+            <hr />
+
+            <h5>{translate('settings.bukkit_specific')}</h5>
+            <SortByContextOption />
           </div>
 
           <div className="actions">

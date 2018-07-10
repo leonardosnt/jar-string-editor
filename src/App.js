@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 leonardosnt (leonrdsnt@gmail)
+ *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { utf8ByteArrayToString } from 'utf8-string-bytes';
 import React, { Component } from 'react';
 import update from 'react-addons-update';
 import debounce from 'lodash.debounce';
@@ -24,14 +23,14 @@ import JSZip from 'jszip';
 
 import { readFileAsArrayBuffer } from './util/file-reader';
 import { Button, SettingsPanel, FileSelector, StringList } from './components';
-import { getInstructionContext } from './util/jct-util';
+import { getUtf8String, getInstructionLocation } from './util/jct-util';
 import { stringContains } from './util/string-util';
 import { saveAs } from 'file-saver';
 import { translate } from './i18n/i18n';
 
 import StringSearcher from './StringSearcher';
 import StringWriter from './StringWriter';
-import settings from './settings';
+import Settings from './settings';
 
 import GearSvg from './icons/gear';
 import CoffeIcon from './icons/coffee';
@@ -55,7 +54,7 @@ class App extends Component {
 
     const debounced = debounce(
       this.onSearchChange.bind(this),
-      settings.debounceRate
+      Settings.debounceRate
     );
     this.onSearchChange = e => {
       e.persist();
@@ -63,7 +62,20 @@ class App extends Component {
     };
 
     // Update when settings change
-    settings.observe(() => this.forceUpdate());
+    Settings.observe(oldSettings => {
+      if (oldSettings.sortByContext !== Settings.sortByContext) {
+        this.setState(state =>
+          update(state, {
+            context: {
+              strings: { $set: this._sortByContext(state.context.strings) },
+            },
+          })
+        );
+        return;
+      }
+
+      this.forceUpdate();
+    });
   }
 
   clearContext = () => {
@@ -93,7 +105,7 @@ class App extends Component {
 
   onJarLoaded = (jar, selectedFileName) => {
     const stringSearcher = (this.stringSearcher = new StringSearcher());
-    const foundStrings = [];
+    const stringsFound = [];
     const numClasses = jar.filter(path => path.endsWith('.class')).length;
     let stringId = 0;
 
@@ -107,35 +119,32 @@ class App extends Component {
       })
     );
 
-    stringSearcher.on(
-      'found',
-      ({
+    stringSearcher.on('found', string => {
+      const {
         fileName,
         classFile,
         constantIndex,
         instructionIndex,
         instructions,
         method,
-      }) => {
-        const constantEntry = classFile.constant_pool[constantIndex];
-        const utf8Constant =
-          classFile.constant_pool[constantEntry.string_index];
-        const value = utf8ByteArrayToString(utf8Constant.bytes);
-        const context = getInstructionContext(
-          classFile,
-          method,
-          instructions[instructionIndex]
-        );
+        ...rest
+      } = string;
+      const value = getUtf8String(classFile.constant_pool, constantIndex);
+      const location = getInstructionLocation(
+        classFile,
+        method,
+        instructions[instructionIndex]
+      );
 
-        foundStrings.push({
-          constantIndex,
-          context,
-          fileName,
-          value,
-          id: stringId++,
-        });
-      }
-    );
+      stringsFound.push({
+        constantIndex,
+        location,
+        fileName,
+        value,
+        id: stringId++,
+        ...rest,
+      });
+    });
 
     stringSearcher.on('read_count', num => {
       this.setState({ loadInfo: `Procurando ${num}/${numClasses} classes` });
@@ -145,11 +154,15 @@ class App extends Component {
       // We don't need this anymore
       delete this.stringSearcher;
 
+      if (Settings.sortByContext) {
+        this._sortByContext(stringsFound);
+      }
+
       this.setState(state =>
         update(state, {
           loadInfo: { $set: undefined },
           context: {
-            strings: { $set: foundStrings },
+            strings: { $set: stringsFound },
           },
         })
       );
@@ -193,7 +206,7 @@ class App extends Component {
     for (const string of context.strings) {
       const { value } = string;
 
-      if (settings.hideEmptyStrings && !value.trim().length) continue;
+      if (Settings.hideEmptyStrings && !value.trim().length) continue;
 
       // No filter is applied
       if (!context.filter) {
@@ -276,6 +289,22 @@ class App extends Component {
       </div>
     );
   }
+
+  _sortByContext = strings => {
+    const contextPriority = {
+      SendMessage: 2,
+      ItemDisplayName: 1,
+      [undefined]: 0,
+    };
+
+    strings.sort((str0, str1) => {
+      const ctx0 = str0.context;
+      const ctx1 = str1.context;
+      return ctx0 === ctx1 ? 0 : contextPriority[ctx1] - contextPriority[ctx0];
+    });
+
+    return strings;
+  };
 }
 
 const Link = props => (
@@ -318,9 +347,9 @@ const Footer = () => (
 
 window.__BUILD_INFO__ = process.env.__BUILD_INFO__;
 
-settings.observe(oldSettings => {
-  if (oldSettings.language === settings.language || !window.ga) return;
-  window.ga('send', 'event', 'language', 'change', settings.language);
+Settings.observe(oldSettings => {
+  if (oldSettings.language === Settings.language || !window.ga) return;
+  window.ga('send', 'event', 'language', 'change', Settings.language);
 });
 
 export default App;

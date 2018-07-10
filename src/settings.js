@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017 leonardosnt (leonrdsnt@gmail)
+ *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 const DEFAULT_SETTINGS = {
   hideEmptyStrings: true,
+  sortByContext: true,
   debounceRate: 200, // Not configurable yet
 };
 
@@ -59,7 +60,7 @@ function save() {
   localStorage.setItem('jse-settings', JSON.stringify(this));
 }
 
-// Simple way to observe when settings is saved
+// Simple way to observe when settings are saved
 function observe(listener) {
   observers.push(listener);
 }
