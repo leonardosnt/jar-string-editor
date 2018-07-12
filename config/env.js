@@ -78,6 +78,27 @@ function getClientEnvironment(publicUrl) {
         // Build info
         __BUILD_INFO__: JSON.stringify({
           date: new Date().toISOString(),
+          commit: (() => {
+            console.log('fetching last commit...');
+
+            const cp = require('child_process');
+            const { stderr, stdout } = cp.spawnSync('git', [
+              'log',
+              '-n',
+              '1',
+              '--pretty=format:"%H"',
+            ]);
+
+            if (stderr.toString()) {
+              console.log('failed to get last commit.');
+              console.log(stderr);
+            }
+
+            const commitHash = stdout.toString();
+
+            // remove quotes
+            return commitHash.substring(1, commitHash.length - 1);
+          })(),
         }),
       }
     );
