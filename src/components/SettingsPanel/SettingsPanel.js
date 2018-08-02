@@ -65,11 +65,29 @@ export default class SettingsPanel extends Component {
 
   onSave = () => {
     settings.save();
-    this.setState({ hidden: true });
+    this.hide();
   };
 
-  onToggle = () => {
-    this.setState(state => ({ hidden: !state.hidden }));
+  toggle = () => {
+    if (this.state.hidden) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  };
+
+  componentWillUnmount() {
+    this._removeClickOutsideListener();
+  }
+
+  show = () => {
+    this.setState({ hidden: false });
+    this._addClickOutsideListener();
+  };
+
+  hide = () => {
+    this.setState({ hidden: true });
+    this._removeClickOutsideListener();
   };
 
   render() {
@@ -83,7 +101,7 @@ export default class SettingsPanel extends Component {
 
     return (
       <div className="settings-container">
-        <span onClick={this.onToggle} className="toggle-icon">
+        <span onClick={this.toggle} className="toggle-icon">
           {settingsToggleIcon}
         </span>
 
@@ -111,4 +129,23 @@ export default class SettingsPanel extends Component {
       </div>
     );
   }
+
+  _onClickOutside = e => {
+    for (const element of e.path) {
+      if (
+        element.className === 'settings-container' ||
+        element.className === 'settings-wrapper'
+      )
+        return;
+    }
+    this.hide();
+  };
+
+  _removeClickOutsideListener = () => {
+    window.removeEventListener('click', this._onClickOutside);
+  };
+
+  _addClickOutsideListener = () => {
+    window.addEventListener('click', this._onClickOutside);
+  };
 }
