@@ -28,27 +28,20 @@ export default class FileSelector extends Component {
     status: 'SELECT',
   };
 
-  renderDropzone = ({
-    isDragActive,
-    isDragReject,
-    acceptedFiles,
-    rejectedFiles,
-  }) => {
+  renderDropzone = ({ acceptedFiles, rejectedFiles }) => {
     let { status } = this.state;
 
     if (rejectedFiles.length) {
       status = 'NOT_A_JAR_FILE';
-    }
-
-    if (acceptedFiles.length) {
+    } else if (acceptedFiles.length) {
       const [file] = acceptedFiles;
 
       status = 'LOADING_FILE';
 
       // We only care about the catch because we want to show an
       // error to the user if we can't load the file.
-      this.props.onSelected(file).catch(e => {
-        this.setState({ status: 'FAILED_TO_LOAD', error: e });
+      this.props.onSelected(file).catch(error => {
+        this.setState({ status: 'FAILED_TO_LOAD', error });
       });
 
       // Clear accepted files
