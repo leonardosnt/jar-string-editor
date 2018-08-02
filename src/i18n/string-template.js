@@ -76,8 +76,9 @@ const compile = text => {
   const arrayValues = tokens
     .map(token => {
       if (token.varName) {
+        const { varName } = token;
         // (vars['varName'] || '{{varName}}')
-        return `(vars['${token.varName}'] || '{{${token.varName}}}')`;
+        return `(vars['${varName}'] == undefined ? '{{${varName}}}' : vars['${varName}'])`;
       }
       // string
       return `'${token}'`;
