@@ -21,7 +21,6 @@ import update from 'react-addons-update';
 import debounce from 'lodash.debounce';
 import JSZip from 'jszip';
 
-import { readFileAsArrayBuffer } from './util/file-reader';
 import { Button, SettingsPanel, FileSelector, StringList } from './components';
 import { getUtf8String, getInstructionLocation } from './util/jct-util';
 import { stringContains } from './util/string-util';
@@ -176,9 +175,7 @@ class App extends Component {
       window.ga('send', 'event', 'file', 'select', file.size);
     }
 
-    return readFileAsArrayBuffer(file)
-      .then(JSZip.loadAsync)
-      .then(jar => this.onJarLoaded(jar, file.name));
+    return JSZip.loadAsync(file).then(jar => this.onJarLoaded(jar, file.name));
   };
 
   onSearchChange = ({ target }) => {
