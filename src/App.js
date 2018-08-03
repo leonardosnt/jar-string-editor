@@ -110,7 +110,13 @@ class App extends Component {
 
     this.setState(state =>
       update(state, {
-        loadInfo: { $set: `Procurando 0/${numClasses} classes` },
+        loadInfo: {
+          $set: translate('app.collecting_strings', {
+            progress: 0,
+            numDone: 0,
+            numClasses,
+          }),
+        },
         context: {
           loadedJar: { $set: jar },
           selectedFileName: { $set: selectedFileName },
@@ -145,8 +151,15 @@ class App extends Component {
       });
     });
 
-    stringSearcher.on('read_count', num => {
-      this.setState({ loadInfo: `Procurando ${num}/${numClasses} classes` });
+    stringSearcher.on('read_count', numDone => {
+      const progress = (numDone / numClasses * 100).toFixed(1);
+      this.setState({
+        loadInfo: translate('app.collecting_strings', {
+          progress,
+          numDone,
+          numClasses,
+        }),
+      });
     });
 
     stringSearcher.on('finish', () => {

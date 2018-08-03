@@ -22,6 +22,7 @@
     "bukkit_specific": "Específico do Bukkit"
   },
   "app": {
+    "collecting_strings": "Coletando strings... {{progress}}% ({{numDone}}/{{numClasses}} classes)",
     "created_by": "Criado com muito {{coffee}} por {{link}}.",
     "old_version": "Não gostou da nova versão? Clique aqui para usar a antiga.",
     "search": "Pesquisar",
