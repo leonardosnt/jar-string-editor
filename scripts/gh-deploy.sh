@@ -6,6 +6,7 @@ echo Building...
 
 yarn build
 
+rm -rf static # remove old assets
 cp -rfv ../build/* ./
 
 echo =========== Modified files ===========
