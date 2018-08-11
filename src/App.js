@@ -198,8 +198,7 @@ class App extends Component {
   };
 
   onStringChanged = (newValue, stringId) => {
-    const { context } = this.state;
-    const string = context.strings[stringId];
+    const string = this.state.context.strings.find(s => s.id === stringId);
 
     if (newValue !== string.value) {
       string.value = newValue;
