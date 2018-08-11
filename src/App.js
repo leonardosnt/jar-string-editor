@@ -341,8 +341,12 @@ const Footer = () => (
     }}
   >
     {translate('app.created_by', {
-      coffee: <CoffeIcon />,
-      link: <Link href="https://github.com/leonardosnt">leonardosnt</Link>,
+      coffee: <CoffeIcon key="coffee" />,
+      link: (
+        <Link key="link" href="https://github.com/leonardosnt">
+          leonardosnt
+        </Link>
+      ),
     })}
 
     <div style={{ paddingTop: '.6em', fontSize: '.75em' }}>

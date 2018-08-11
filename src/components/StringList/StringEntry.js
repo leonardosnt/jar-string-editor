@@ -110,25 +110,25 @@ const StringInfo = ({ string: { location, context } }) => (
   <div className="string-info-tooltip">
     <span>
       {translate('app.string_info.class', {
-        className: <b>{location.className}</b>,
+        className: <b key="className">{location.className}</b>,
       })}
     </span>
     <span>
       {translate('app.string_info.method', {
-        method: <b>{prettyMethodInfo(location.method)}</b>,
+        method: <b key="method">{prettyMethodInfo(location.method)}</b>,
       })}
     </span>
     {location.lineNumber && (
       <span>
         {translate('app.string_info.line', {
-          lineNumber: <b>{location.lineNumber}</b>,
+          lineNumber: <b key="line">{location.lineNumber}</b>,
         })}
       </span>
     )}
     {context && (
       <span>
         {translate('app.string_info.context', {
-          context: <b>{context}</b>,
+          context: <b key="context">{context}</b>,
         })}
       </span>
     )}
