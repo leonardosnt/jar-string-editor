@@ -26,8 +26,9 @@ input.string-input {
   font-size: 1em;
   border: 1px solid rgba(0, 0, 0, .3);
   background: white;
-  word-break: break-all;
-  word-wrap: break-word;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .string-entry .string-info {
