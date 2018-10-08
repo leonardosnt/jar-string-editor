@@ -33,7 +33,6 @@ import Settings from './settings';
 
 import GearSvg from './icons/gear';
 import CoffeIcon from './icons/coffee';
-import ReplaceIcon from './icons/replace';
 
 import './App.css';
 
