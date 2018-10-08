@@ -20,7 +20,7 @@
  * @param {string} haystack
  * @param {string} needle
  */
-export function stringContains(haystack, needle) {
+export function stringContains(haystack, needle, caseSensitive = false) {
   let hay_pos = 0;
   let need_pos = 0;
   let eq_count = 0;
@@ -29,7 +29,6 @@ export function stringContains(haystack, needle) {
     const hay_cur_char = haystack.charCodeAt(hay_pos++),
       needle_cur_char = needle.charCodeAt(need_pos++);
 
-    // Ignore case
     const case_diff =
       hay_cur_char >= 97 && hay_cur_char <= 122
         ? -32
@@ -37,7 +36,7 @@ export function stringContains(haystack, needle) {
 
     if (
       hay_cur_char === needle_cur_char ||
-      hay_cur_char + case_diff === needle_cur_char
+      (!caseSensitive && hay_cur_char + case_diff === needle_cur_char)
     ) {
       eq_count++;
     } else {
