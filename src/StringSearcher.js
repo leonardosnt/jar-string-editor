@@ -89,7 +89,16 @@ export default class StringReader {
       // Unzip the class file and search on it
       currentClassFile
         .async('arraybuffer')
-        .then(classData => this.searchInClass(currentClassFile.name, classData))
+        .then(classData => {
+          try {
+            this.searchInClass(currentClassFile.name, classData);
+          } catch (e) {
+            console.error(
+              `Failed to search in class '${currentClassFile.name}'`
+            );
+            console.error(e);
+          }
+        })
         .then(() => processNext());
 
       // Every 100 (currently hardcoded) classes we emit an event
