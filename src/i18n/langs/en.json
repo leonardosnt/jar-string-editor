@@ -32,7 +32,7 @@
       "class": "Class: {{className}}",
       "method": "Method: {{method}}",
       "line": "Line Number: {{lineNumber}}",
-      "context": "Contexto: {{context}}"
+      "context": "Context: {{context}}"
     },
     "load_more": "Load more"
   }
