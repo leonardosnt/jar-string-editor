@@ -33,6 +33,7 @@
       "method": "Método: {{method}}",
       "line": "Linha: {{lineNumber}}",
       "context": "Contexto: {{context}}"
-    }
+    },
+    "load_more": "Carregar mais"
   }
 }

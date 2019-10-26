@@ -20,6 +20,7 @@ import React, { Component } from 'react';
 
 import StringEntry from './StringEntry';
 import './StringList.css';
+import { translate } from '../../i18n/i18n';
 
 import { Button } from '../';
 
@@ -62,7 +63,9 @@ export default class StringList extends Component {
         </div>
         {remaining > 0 && (
           <div className="load-more-btn-container">
-            <Button onClick={this.loadMore}>Carregar mais ({remaining})</Button>
+            <Button onClick={this.loadMore}>
+              {translate('app.load_more')} ({remaining})
+            </Button>
           </div>
         )}
       </div>
