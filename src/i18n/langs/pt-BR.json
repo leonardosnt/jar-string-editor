@@ -1,6 +1,6 @@
 {
   "file_selector": {
-    "select": "Clique para selecionar um arquivo ou arraste-o até aqui.",
+    "select": "Clique para selecionar um arquivo JAR ou arraste-o até aqui.",
     "failed_to_load": "Não foi possível carregar o arquivo selecionado.",
     "not_a_jar_file": "O arquivo selecionado não é um arquivo jar válido.",
     "loading": "Carregando arquivo..."

@@ -1,6 +1,6 @@
 {
   "file_selector": {
-    "select": "Click to select a file or drag it here.",
+    "select": "Click to select a JAR file or drag it here.",
     "failed_to_load": "Failed to load the selected file.",
     "not_a_jar_file": "The selected file is not a valid jar file.",
     "loading": "Loading file..."
