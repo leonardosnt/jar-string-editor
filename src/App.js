@@ -37,6 +37,7 @@ import CoffeIcon from './icons/coffee';
 import './App.css';
 
 class App extends Component {
+  // TODO: merge the context property directly in the state?
   static INITIAL_CONTEXT = Object.freeze({
     loadedJar: undefined,
     selectedFileName: undefined,
@@ -134,6 +135,7 @@ class App extends Component {
         method,
         ...rest
       } = string;
+
       const value = getUtf8String(classFile.constant_pool, constantIndex);
       const location = getInstructionLocation(
         classFile,
@@ -198,6 +200,7 @@ class App extends Component {
   };
 
   onStringChanged = (newValue, stringId) => {
+    // TODO: use better (constant) lookup
     const string = this.state.context.strings.find(s => s.id === stringId);
 
     if (newValue !== string.value) {
@@ -250,8 +253,24 @@ class App extends Component {
     </div>
   );
 
+  onStringsReplaced = newStrings => {
+    this.setState(state =>
+      update(state, {
+        context: {
+          strings: { $set: newStrings },
+        },
+      })
+    );
+  };
+
+  onToggleReplace = () => {
+    this.setState(({ displayReplace }) => ({
+      displayReplace: !displayReplace,
+    }));
+  };
+
   render() {
-    const { loadInfo, context } = this.state;
+    const { loadInfo, context, displayReplace } = this.state;
 
     if (context.loadedJar === undefined) {
       return this.renderAppContainer(
@@ -288,10 +307,23 @@ class App extends Component {
                 after_filter: filtered.length,
               })}
             </span>
-            <Button onClick={this.onSaveFile} className="save-btn">
+            <Button onClick={this.onSaveFile} style={{ float: 'right' }}>
               {translate('app.save')}
             </Button>
+            <Button
+              onClick={this.onToggleReplace}
+              style={{ float: 'right', marginRight: '2px' }}
+            >
+              Replace
+            </Button>
           </div>
+
+          {displayReplace && (
+            <StringReplace
+              onReplaced={this.onStringsReplaced}
+              strings={context.strings}
+            />
+          )}
         </div>
 
         <StringList onStringChanged={this.onStringChanged} strings={filtered} />
@@ -314,6 +346,47 @@ class App extends Component {
 
     return strings;
   };
+}
+
+// TODO: add regex support?
+class StringReplace extends Component {
+  inputFromRef = React.createRef();
+  inputToRef = React.createRef();
+
+  replaceStrings = () => {
+    const { strings } = this.props;
+    const fromValue = this.inputFromRef.current.value;
+    const toValue = this.inputToRef.current.value;
+
+    if (!fromValue || !toValue) {
+      return;
+    }
+
+    for (const string of strings) {
+      if (!stringContains(string.value, fromValue, true)) {
+        continue;
+      }
+      string.value = string.value.replace(fromValue, toValue);
+      string.changed = true;
+    }
+
+    this.props.onReplaced(strings);
+  };
+
+  render() {
+    return (
+      <div className="replace">
+        Replace
+        <div className="replace-inputs">
+          <input ref={this.inputFromRef} type="text" placeholder="From" />
+          <input ref={this.inputToRef} type="text" placeholder="To" />
+        </div>
+        <Button style={{ float: 'right' }} onClick={this.replaceStrings}>
+          Replace
+        </Button>
+      </div>
+    );
+  }
 }
 
 const Link = props => (

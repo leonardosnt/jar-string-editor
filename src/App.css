@@ -41,6 +41,19 @@
   float: right;
 }
 
+.replace-inputs {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+}
+.replace-inputs input {
+  height: 20px;
+  margin-bottom: 5px;
+}
+.replace .button {
+  float: right;
+}
+
 .load-info-box {
   margin: auto;
 

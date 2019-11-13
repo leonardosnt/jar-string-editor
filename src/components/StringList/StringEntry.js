@@ -15,6 +15,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import React, { Component } from 'react';
 import HighlightWords from 'react-highlight-words';
 
@@ -26,77 +27,73 @@ import './StringEntry.css';
 import { translate } from '../../i18n/i18n';
 
 export default class StringEntry extends Component {
-  state = { focused: false };
+  inputRef = React.createRef();
 
-  onDivClick = ({ target }) => {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      focused: false,
+      value: props.string.value,
+    };
+  }
+
+  onDivClick = () => {
     this.setState({ focused: true });
   };
 
-  onInput = ({ target }) => {
-    const { string } = this.props;
-
-    // If highlightWords is not undefined it means that the string object was cloned
-    // so we need to update it's value here.
-    if (string.highlightWords) {
-      string.value = target.value;
-    }
-
-    this.props.onChanged(target.value, string.id);
+  onChange = ({ target }) => {
+    this.setState({ value: target.value });
   };
 
+  componentWillReceiveProps(nextProps) {
+    if (this.state.value !== nextProps.string.value) {
+      // We don't care if we erase the state.
+      this.setState({ value: nextProps.string.value });
+    }
+  }
+
   componentDidUpdate() {
+    // We use this to focus the input when it changes from the
+    // higlighted div. If we don't do this, the user will need to
+    // click twice to focus the input.
     if (this.state.focused) {
-      const { input } = this;
-
-      input.focus();
-
-      // Place the caret at end
-      setImmediate(() => {
-        input.selectionStart = input.selectionEnd = input.value.length;
-      });
+      this.inputRef.current.focus();
     }
   }
 
   onInputBlur = () => {
     this.setState({ focused: false });
+    this.props.onChanged(this.state.value, this.props.string.id);
   };
 
   render() {
     const { string } = this.props;
-    const { value, highlightWords } = string;
 
-    let element;
-
-    if (!highlightWords || this.state.focused) {
-      element = (
-        <input
-          onInput={this.onInput}
-          ref={input => {
-            this.input = input;
-          }}
-          onBlur={this.onInputBlur}
-          type="text"
-          className="string-input"
-          defaultValue={value}
-        />
-      );
-    } else {
-      // TODO: tab select? focus & allow to use enter to open the file selector
-      element = (
-        <div onClick={this.onDivClick} className="string-input">
-          <HighlightWords
-            highlightClassName={'string-highlight'}
-            searchWords={highlightWords}
-            autoEscape={true}
-            textToHighlight={value}
-          />
-        </div>
-      );
-    }
+    const useFakeHighlightedInput =
+      string.highlightWords && !this.state.focused;
 
     return (
       <div className="string-entry">
-        {element}
+        {useFakeHighlightedInput ? (
+          <div onClick={this.onDivClick} className="string-input">
+            <HighlightWords
+              highlightClassName={'string-highlight'}
+              searchWords={string.highlightWords}
+              autoEscape={true}
+              textToHighlight={this.state.value}
+            />
+          </div>
+        ) : (
+          <input
+            onChange={this.onChange}
+            ref={this.inputRef}
+            onBlur={this.onInputBlur}
+            type="text"
+            className="string-input"
+            value={this.state.value}
+          />
+        )}
         <div className="string-info">
           <InfoIcon />
         </div>
