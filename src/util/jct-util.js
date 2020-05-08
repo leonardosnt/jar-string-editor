@@ -40,29 +40,15 @@ export function getAttribute(classFile, source, attributeName) {
   })[0];
 }
 
-/**
- * @param {ClassFile} classFile
- * @param {MethodInfo} method
- * @param {Instruction} instruction
- * @return {{ method: { name: String, descriptor: String }, className: String, lineNumber?: String }}
- */
-export function getInstructionLocation(classFile, method, instruction) {
-  const className = extractClassName(
-    classFile.this_class,
-    classFile.constant_pool
-  );
-  const methodInfoConsts = extractMethodInfoConstants(
-    method,
-    classFile.constant_pool
-  );
-  let lineNumber;
+export function getInstructionLineNumber(classFile, method, instruction) {
+  let lineNumber = undefined;
 
   const codeAttr = getAttribute(classFile, method, 'Code');
   const lineNumberTable = getAttribute(classFile, codeAttr, 'LineNumberTable');
   const { bytecodeOffset } = instruction;
 
   if (lineNumberTable !== undefined) {
-    for (var i = 0; i < lineNumberTable.line_number_table_length - 1; i++) {
+    for (let i = 0; i < lineNumberTable.line_number_table_length - 1; i++) {
       const { start_pc, line_number } = lineNumberTable.line_number_table[i];
       const end_pc = lineNumberTable.line_number_table[i + 1].start_pc;
 
@@ -73,11 +59,7 @@ export function getInstructionLocation(classFile, method, instruction) {
     }
   }
 
-  return {
-    className,
-    lineNumber,
-    method: methodInfoConsts,
-  };
+  return lineNumber;
 }
 
 /**

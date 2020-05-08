@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,12 @@ import debounce from 'lodash.debounce';
 import JSZip from 'jszip';
 
 import { Button, SettingsPanel, FileSelector, StringList } from './components';
-import { getUtf8String, getInstructionLocation } from './util/jct-util';
+import {
+  getUtf8String,
+  extractClassName,
+  extractMethodInfoConstants,
+  getInstructionLineNumber,
+} from './util/jct-util';
 import { stringContains } from './util/string-util';
 import { saveAs } from 'file-saver';
 import { translate } from './i18n/i18n';
@@ -78,8 +83,8 @@ class App extends Component {
   }
 
   clearContext = () => {
-    if (this.stringSearcher) {
-      this.stringSearcher.stop();
+    if (this.currentStringSearcher) {
+      this.currentStringSearcher.stop();
     }
 
     this.setState({ context: { ...App.INITIAL_CONTEXT } });
@@ -103,10 +108,11 @@ class App extends Component {
   };
 
   onJarLoaded = (jar, selectedFileName) => {
-    const stringSearcher = (this.stringSearcher = new StringSearcher());
-    const stringsFound = [];
+    const stringSearcher = new StringSearcher();
     const numClasses = jar.filter(path => path.endsWith('.class')).length;
-    let stringId = 0;
+
+    // Used to stop the current search if needed.
+    this.currentStringSearcher = stringSearcher;
 
     this.setState(state =>
       update(state, {
@@ -124,47 +130,61 @@ class App extends Component {
       })
     );
 
-    stringSearcher.on('found', string => {
-      const {
-        fileName,
-        classFile,
-        constantIndex,
-        instructionIndex,
-        instructions,
-        method,
-        ...rest
-      } = string;
-      const value = getUtf8String(classFile.constant_pool, constantIndex);
-      const location = getInstructionLocation(
-        classFile,
-        method,
-        instructions[instructionIndex]
-      );
-
-      stringsFound.push({
-        constantIndex,
-        location,
-        fileName,
-        value,
-        id: stringId++,
-        ...rest,
-      });
-    });
-
     stringSearcher.on('read_count', numDone => {
-      const progress = (numDone / numClasses * 100).toFixed(1);
       this.setState({
         loadInfo: translate('app.collecting_strings', {
-          progress,
+          progress: (numDone / numClasses * 100).toFixed(1),
           numDone,
           numClasses,
         }),
       });
     });
 
-    stringSearcher.on('finish', () => {
+    stringSearcher.on('finish', result => {
+      const stringsFound = [];
+      let stringId = 0;
+
+      for (const { classFile, fileName, methods } of result) {
+        const className = extractClassName(
+          classFile.this_class,
+          classFile.constant_pool
+        );
+
+        for (const { method, strings } of methods) {
+          // Extract method info constants only once
+          const methodLocation = extractMethodInfoConstants(
+            method,
+            classFile.constant_pool
+          );
+
+          for (const {
+            constantIndex,
+            value,
+            context,
+            instruction,
+          } of strings) {
+            stringsFound.push({
+              constantIndex: constantIndex,
+              value: value,
+              context: context,
+              fileName: fileName,
+              location: {
+                className,
+                method: methodLocation,
+                lineNumber: getInstructionLineNumber(
+                  classFile,
+                  method,
+                  instruction
+                ),
+              },
+              id: stringId++,
+            });
+          }
+        }
+      }
+
       // We don't need this anymore
-      delete this.stringSearcher;
+      delete this.currentStringSearcher;
 
       if (Settings.sortByContext) {
         this._sortByContext(stringsFound);

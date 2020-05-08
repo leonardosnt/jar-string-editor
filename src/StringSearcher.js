@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import {
   getAttribute,
   extractClassName,
   extractMethodInfoConstants,
+  getUtf8String,
 } from './util/jct-util';
 import {
   JavaClassFileReader,
@@ -34,17 +35,6 @@ import {
  * This class will emit the following events:
  *
  * - finish: when the searchInJar method finish reading all class files;
- *
- * - found: when a string is found. The payload from this event will follow this format:
- * @example
- * {
- *  fileName: string,
- *  classFile: ClassFile,
- *  method: MethodInfo,
- *  instructions: Instruction[],
- *  instructionIndex: Number,
- *  constantIndex: Number,
- *  context: string
  * }
  */
 export default class StringReader {
@@ -52,6 +42,7 @@ export default class StringReader {
     Object.assign(this, mitt());
     this._classReader = new JavaClassFileReader();
     this._stopped = false;
+    this._result = [];
   }
 
   /**
@@ -70,19 +61,19 @@ export default class StringReader {
     const classes = jar.filter(path => path.endsWith('.class'));
 
     /**
-     * We process the classe sequentially to use less memory (jszip use a lot of memory) and to
-     * be able to 'give feedback to the UI' (i.e. display how many class files has been read).
+     * We process the class files sequentially to use less memory (JSZIP uses a lot of memory)
+     * and to be able to 'give feedback to the UI' (i.e. display how many class files have been read).
      *
      * It's like 'promise series'
      */
-    let currentClassIdx = 0;
+    let currentClassIndex = 0;
 
     const processNext = () => {
-      const currentClassFile = classes[currentClassIdx++];
+      const currentClassFile = classes[currentClassIndex++];
 
-      // If currentClassFile is undefined it means we are done
+      // If currentClassFile is undefined, we are done
       if (currentClassFile === undefined || this._stopped) {
-        this.emit('finish');
+        this.emit('finish', this._result);
         return;
       }
 
@@ -103,8 +94,8 @@ export default class StringReader {
 
       // Every 100 (currently hardcoded) classes we emit an event
       // to update the UI
-      if (currentClassIdx && currentClassIdx % 100 === 0) {
-        this.emit('read_count', currentClassIdx);
+      if (currentClassIndex && currentClassIndex % 100 === 0) {
+        this.emit('read_count', currentClassIndex);
       }
     };
 
@@ -127,25 +118,21 @@ export default class StringReader {
      * Here we store the constantIndex of the strings we already found.
      * It's used because the same string can be referenced many times in different methods.
      */
-    const alreadyMappedStrings = new Set();
+    const alreadyMappedStrings = new Set(); // TODO: better name
 
-    // Loop through all methods
-    classFile.methods
-      // Ignore abstract methods since it does not have code
+    const stringsByMethod = classFile.methods
       .filter(method => (method.access_flags & Modifier.ABSTRACT) === 0)
-      .forEach(method => {
-        // Get the 'Code' attribute from method
+      .map(method => {
         const codeAttribute = getAttribute(classFile, method, 'Code');
 
-        // If the attribute does not exist or it is empty we ignore it.
         if (codeAttribute === undefined || codeAttribute.length === 0) {
-          return;
+          return undefined;
         }
 
-        // Parse the bytecode from the code attribute
         const instructions = InstructionParser.fromBytecode(codeAttribute.code);
 
-        // Loop through all instructions of the method
+        const stringsInThisMethod = [];
+
         for (let i = 0; i < instructions.length; i++) {
           const { opcode, operands } = instructions[i];
 
@@ -163,7 +150,6 @@ export default class StringReader {
 
           const constantEntry = constantPool[constantIndex];
 
-          // We only want string constants
           if (constantEntry.tag !== ConstantType.STRING) {
             continue;
           }
@@ -174,20 +160,28 @@ export default class StringReader {
             continue;
           }
 
-          this.emit('found', {
-            fileName,
-            classFile,
-            method,
-            instructions,
-            instructionIndex: i,
+          stringsInThisMethod.push({
             constantIndex,
-            context: this._getStringContext(constantPool, instructions, i),
+            instruction: instructions[i],
+            value: getUtf8String(classFile.constant_pool, constantIndex),
+            context: this._getStringContext(constantPool, instructions, i), // TODO: remove from here
           });
 
           // 'Mark' as found
           alreadyMappedStrings.add(constantIndex);
         }
+
+        return { method, strings: stringsInThisMethod };
+      })
+      .filter(m => m && m.strings.length > 0);
+
+    if (stringsByMethod.length > 0) {
+      this._result.push({
+        classFile,
+        fileName,
+        methods: stringsByMethod,
       });
+    }
   }
 
   /**
@@ -197,6 +191,9 @@ export default class StringReader {
    * @param {number} index - Index in instructions
    */
   _getStringContext(constantPool, instructions, index) {
+    // TODO: Since we only look at the next instruction,
+    // this won't work with string concatenations.
+
     const nextInstruction = instructions[index + 1];
 
     if (nextInstruction.opcode === Opcode.INVOKEINTERFACE) {
