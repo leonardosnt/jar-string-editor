@@ -140,58 +140,60 @@ class App extends Component {
       });
     });
 
-    stringSearcher.on('finish', result => {
-      const stringsFound = [];
-      let stringId = 0;
+    stringSearcher.on('finish', this.onStringSearcherFinish);
 
-      for (const { classFile, fileName, methods } of result) {
-        const className = extractClassName(
-          classFile.this_class,
+    stringSearcher.searchInJar(jar);
+  };
+
+  onStringSearcherFinish = result => {
+    const stringsFound = [];
+    let stringId = 0;
+
+    for (const { classFile, fileName, methods } of result) {
+      const className = extractClassName(
+        classFile.this_class,
+        classFile.constant_pool
+      );
+
+      for (const { method, strings } of methods) {
+        // Extract method info constants only once
+        const methodLocation = extractMethodInfoConstants(
+          method,
           classFile.constant_pool
         );
 
-        for (const { method, strings } of methods) {
-          // Extract method info constants only once
-          const methodLocation = extractMethodInfoConstants(
-            method,
-            classFile.constant_pool
-          );
+        for (const string of strings) {
+          const location = {
+            className,
+            method: methodLocation,
+            lineNumber: getInstructionLineNumber(classFile, method, string.instruction),
+          };
 
-          for (const string of strings) {
-            const location = {
-              className,
-              method: methodLocation,
-              lineNumber: getInstructionLineNumber(classFile, method, string.instruction),
-            };
-
-            stringsFound.push({
-              ...string,
-              fileName,
-              location,
-              id: stringId++,
-            });
-          }
+          stringsFound.push({
+            ...string,
+            fileName,
+            location,
+            id: stringId++,
+          });
         }
       }
+    }
 
-      // We don't need this anymore
-      delete this.currentStringSearcher;
+    // We don't need this anymore
+    delete this.currentStringSearcher;
 
-      if (Settings.sortByContext) {
-        this._sortByContext(stringsFound);
-      }
+    if (Settings.sortByContext) {
+      this._sortByContext(stringsFound);
+    }
 
-      this.setState(state =>
-        update(state, {
-          loadInfo: { $set: undefined },
-          context: {
-            strings: { $set: stringsFound },
-          },
-        })
-      );
-    });
-
-    stringSearcher.searchInJar(jar);
+    this.setState(state =>
+      update(state, {
+        loadInfo: { $set: undefined },
+        context: {
+          strings: { $set: stringsFound },
+        },
+      })
+    );
   };
 
   onFileSelected = file => {
