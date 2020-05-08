@@ -157,26 +157,17 @@ class App extends Component {
             classFile.constant_pool
           );
 
-          for (const {
-            constantIndex,
-            value,
-            context,
-            instruction,
-          } of strings) {
+          for (const string of strings) {
+            const location = {
+              className,
+              method: methodLocation,
+              lineNumber: getInstructionLineNumber(classFile, method, string.instruction),
+            };
+
             stringsFound.push({
-              constantIndex: constantIndex,
-              value: value,
-              context: context,
-              fileName: fileName,
-              location: {
-                className,
-                method: methodLocation,
-                lineNumber: getInstructionLineNumber(
-                  classFile,
-                  method,
-                  instruction
-                ),
-              },
+              ...string,
+              fileName,
+              location,
               id: stringId++,
             });
           }
