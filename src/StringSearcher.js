@@ -84,9 +84,7 @@ export default class StringReader {
           try {
             this.searchInClass(currentClassFile.name, classData);
           } catch (e) {
-            console.error(
-              `Failed to search in class '${currentClassFile.name}'`
-            );
+            console.error(`Failed to search in class '${currentClassFile.name}'`);
             console.error(e);
           }
         })

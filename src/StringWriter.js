@@ -33,25 +33,20 @@ export default class StringWriter {
 
     // We use this to cache the class files we already read.
     const classFileMap = new Map();
-    // Here we store ZipObject#async promises
-    const promises = [];
+    const filePromises = [];
 
     for (const { constantIndex, changed, fileName, value } of strings) {
-      // If the string was not changed, ignore it
       if (!changed) continue;
 
       let classFilePromise;
 
       if (classFileMap.has(fileName)) {
-        // We already read it
         classFilePromise = classFileMap.get(fileName);
       } else {
-        // Read the class from jar
         classFilePromise = jar
           .file(fileName)
           .async('arraybuffer')
           .then(buf => classReader.read(buf));
-        // Put in the cache
         classFileMap.set(fileName, classFilePromise);
       }
 
@@ -73,11 +68,11 @@ export default class StringWriter {
         jar.file(fileName, classWriter.write(classFile).buffer);
       });
 
-      promises.push(classFilePromise);
+      filePromises.push(classFilePromise);
     }
 
     // We wait all ZipObject#async's promises then we re-compress the jar file
-    return Promise.all(promises).then(() =>
+    return Promise.all(filePromises).then(() =>
       jar.generateAsync({ type: 'blob', compression: 'DEFLATE' })
     );
   }

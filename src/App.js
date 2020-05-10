@@ -23,7 +23,6 @@ import JSZip from 'jszip';
 
 import { Button, SettingsPanel, FileSelector, StringList } from './components';
 import {
-  getUtf8String,
   extractClassName,
   extractMethodInfoConstants,
   getInstructionLineNumber,
