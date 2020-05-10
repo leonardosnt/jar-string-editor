@@ -19,10 +19,8 @@
 import mitt from 'mitt';
 import {
   getAttribute,
-  extractClassName,
-  extractMethodInfoConstants,
   getUtf8String,
-} from './util/jct-util';
+} from './util/util';
 import {
   JavaClassFileReader,
   Modifier,
@@ -162,14 +160,14 @@ export default class StringReader {
             constantIndex,
             instruction: instructions[i],
             value: getUtf8String(classFile.constant_pool, constantIndex),
-            context: this._getStringContext(constantPool, instructions, i), // TODO: remove from here
+            instructionIndex: i,
           });
 
           // 'Mark' as found
           alreadyMappedStrings.add(constantIndex);
         }
 
-        return { method, strings: stringsInThisMethod };
+        return { method, instructions, strings: stringsInThisMethod };
       })
       .filter(m => m && m.strings.length > 0);
 
@@ -182,41 +180,4 @@ export default class StringReader {
     }
   }
 
-  /**
-   * TODO: move to another place?
-   * @param {ConstantPoolInfo[]} constantPool
-   * @param {Instruction[]} instructions
-   * @param {number} index - Index in instructions
-   */
-  _getStringContext(constantPool, instructions, index) {
-    // TODO: Since we only look at the next instruction,
-    // this won't work with string concatenations.
-
-    const nextInstruction = instructions[index + 1];
-
-    if (nextInstruction.opcode === Opcode.INVOKEINTERFACE) {
-      const operands = nextInstruction.operands;
-      const index = (operands[0] << 8) | operands[1];
-      const methodRef = constantPool[index];
-      const className = extractClassName(methodRef.class_index, constantPool);
-      const { name, descriptor } = extractMethodInfoConstants(
-        methodRef.name_and_type_index,
-        constantPool
-      );
-
-      const fullMethodDesc = `${className}#${name}${descriptor}`;
-
-      switch (fullMethodDesc) {
-        case 'org/bukkit/command/CommandSender#sendMessage(Ljava/lang/String;)V':
-        case 'org/bukkit/entity/Player#sendMessage(Ljava/lang/String;)V':
-          return 'SendMessage';
-
-        case 'org/bukkit/inventory/meta/ItemMeta#setDisplayName(Ljava/lang/String;)V':
-          return 'ItemDisplayName';
-
-        default:
-          return undefined;
-      }
-    }
-  }
 }

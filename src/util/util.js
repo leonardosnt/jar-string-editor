@@ -18,6 +18,7 @@
 
 import { utf8ByteArrayToString } from 'utf8-string-bytes';
 import { parseMethodDescriptor } from './descriptor-parser';
+import { Opcode } from 'java-class-tools';
 
 /**
  * Get an attribute by its name.
@@ -109,3 +110,40 @@ export function getUtf8String(constant_pool, index) {
 
   return utf8ByteArrayToString(poolEntry.bytes);
 }
+
+/**
+ * @param {ConstantPoolInfo[]} constantPool
+ * @param {Instruction[]} instructions
+ * @param {number} index - Index in instructions
+ */
+export function getStringContext(constantPool, instructions, index) {
+  // TODO: Since we only look at the next instruction,
+  // this won't work with string concatenations.
+
+  const nextInstruction = instructions[index + 1];
+
+  if (nextInstruction.opcode === Opcode.INVOKEINTERFACE) {
+    const operands = nextInstruction.operands;
+    const index = (operands[0] << 8) | operands[1];
+    const methodRef = constantPool[index];
+    const className = extractClassName(methodRef.class_index, constantPool);
+    const { name, descriptor } = extractMethodInfoConstants(
+      methodRef.name_and_type_index,
+      constantPool
+    );
+
+    const fullMethodDesc = `${className}#${name}${descriptor}`;
+
+    switch (fullMethodDesc) {
+      case 'org/bukkit/command/CommandSender#sendMessage(Ljava/lang/String;)V':
+      case 'org/bukkit/entity/Player#sendMessage(Ljava/lang/String;)V':
+        return 'SendMessage';
+
+      case 'org/bukkit/inventory/meta/ItemMeta#setDisplayName(Ljava/lang/String;)V':
+        return 'ItemDisplayName';
+
+      default:
+        return undefined;
+    }
+  }
+};

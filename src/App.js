@@ -23,10 +23,11 @@ import JSZip from 'jszip';
 
 import { Button, SettingsPanel, FileSelector, StringList } from './components';
 import {
+  getStringContext,
   extractClassName,
   extractMethodInfoConstants,
   getInstructionLineNumber,
-} from './util/jct-util';
+} from './util/util';
 import { stringContains } from './util/string-util';
 import { saveAs } from 'file-saver';
 import { translate } from './i18n/i18n';
@@ -154,7 +155,7 @@ class App extends Component {
         classFile.constant_pool
       );
 
-      for (const { method, strings } of methods) {
+      for (const { method, strings, instructions } of methods) {
         // Extract method info constants only once
         const methodLocation = extractMethodInfoConstants(
           method,
@@ -173,6 +174,8 @@ class App extends Component {
             fileName,
             location,
             id: stringId++,
+            context: Settings.sortByContext
+              && getStringContext(classFile.constant_pool, instructions, string.instructionIndex),
           });
         }
       }

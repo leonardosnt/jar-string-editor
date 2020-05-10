@@ -18,7 +18,7 @@
 import React, { Component } from 'react';
 import HighlightWords from 'react-highlight-words';
 
-import { prettyMethodInfo } from '../../util/jct-util.js';
+import { prettyMethodInfo } from '../../util/util.js';
 
 import InfoIcon from '../../icons/info';
 
