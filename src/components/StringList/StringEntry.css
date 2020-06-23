@@ -3,6 +3,12 @@
   margin: 0 50px 1.5px 50px;
 }
 
+@media (min-width: 300px) and (max-width: 800px) {
+  .string-entry {
+    margin: 0 10px 0 10px;
+  }
+}
+
 /* Reset input style */
 input.string-input {
   border: none;
@@ -40,7 +46,7 @@ input.string-input {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
+  width: 25px;
   border: 1px solid rgba(0, 0, 0, .3);
   margin-left: 2px;
   background: rgba(13, 13, 14, 0.1);
@@ -55,7 +61,7 @@ input.string-input {
   padding: 10px;
   z-index: 1000;
   right: 0;
-  margin-right: 33px;
+  margin-right: 28px;
 }
 .string-entry .string-info-tooltip span {
   width: max-content;
