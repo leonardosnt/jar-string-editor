@@ -61,12 +61,13 @@ input.string-input {
   padding: 10px;
   z-index: 1000;
   right: 0;
-  margin-right: 28px;
+  margin-right: 26px;
+  min-width: 250px;
 }
 .string-entry .string-info-tooltip span {
   width: max-content;
   overflow-wrap: break-word;;
-  max-width: 70vw;
+  max-width: 80vw;
 }
 
 .string-entry .string-info-tooltip:hover {
