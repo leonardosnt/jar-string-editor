@@ -98,9 +98,9 @@ export default class StringEntry extends Component {
       <div className="string-entry">
         {element}
         <div className="string-info">
+          <StringInfo string={string} />
           <InfoIcon />
         </div>
-        <StringInfo string={string} />
       </div>
     );
   }

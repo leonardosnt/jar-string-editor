@@ -32,6 +32,7 @@ input.string-input {
 }
 
 .string-entry .string-info {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,27 +49,24 @@ input.string-input {
   border-left: 1px solid rgb(206, 206, 207);
   box-shadow: 0 2px 6px 0 rgba(13, 13, 14, 0.2);
   padding: 10px;
-  right: 90px;
   z-index: 1000;
+  right: 0;
+  margin-right: 33px;
+}
+.string-entry .string-info-tooltip span {
+  width: max-content;
+  overflow-wrap: break-word;;
+  max-width: 70vw;
 }
 
 .string-entry .string-info-tooltip:hover {
   display: block;
 }
 
-.string-entry .string-info:hover + .string-info-tooltip {
+.string-entry .string-info:hover .string-info-tooltip {
   display: block;
 }
 
 .string-entry .string-info-tooltip span {
   display: block;
-}
-
-@media (min-width: 300px) and (max-width: 800px) {
-  .string-entry {
-    margin: 0 10px 0 10px;
-  }
-  .string-entry .string-info-tooltip {
-    right: 50px;
-  }
 }
