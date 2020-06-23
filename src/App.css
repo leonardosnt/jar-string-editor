@@ -31,6 +31,12 @@
 .search input {
   flex: 1;
   height: 20px;
+  font-size: 1.05em;
+  border: 1px solid rgba(0, 0, 0, .3);
+}
+.search input:focus {
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, .7);
 }
 
 .info {

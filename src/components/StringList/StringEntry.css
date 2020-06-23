@@ -30,6 +30,10 @@ input.string-input {
   white-space: nowrap;
   overflow: hidden;
 }
+.string-entry input.string-input:focus {
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, .7);
+}
 
 .string-entry .string-info {
   position: relative;
