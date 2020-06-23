@@ -49,7 +49,7 @@ input.string-input {
   width: 25px;
   border: 1px solid rgba(0, 0, 0, .3);
   margin-left: 2px;
-  background: rgba(13, 13, 14, 0.1);
+  background: rgba(13, 13, 14, 0.07);
 }
 
 .string-entry .string-info-tooltip {
