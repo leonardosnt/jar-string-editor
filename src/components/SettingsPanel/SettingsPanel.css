@@ -30,6 +30,12 @@
   z-index: 9000;
 }
 
+@media (max-width: 450px) {
+  .settings-container .sidebar {
+    width: 100%;
+  }
+}
+
 .settings-container .sidebar .settings-wrapper {
   margin: 40px;
 }
