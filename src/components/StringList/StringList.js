@@ -63,7 +63,7 @@ export default class StringList extends Component {
         </div>
         {remaining > 0 && (
           <div className="load-more-btn-container">
-            <Button onClick={this.loadMore}>
+            <Button onClick={this.loadMore} className="btn-large">
               {translate('app.load_more')} ({remaining})
             </Button>
           </div>

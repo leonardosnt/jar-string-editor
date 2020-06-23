@@ -4,10 +4,17 @@
   font-size: 1em;
   cursor: pointer;
 
-  padding: 10px 35px;
   border: 1px solid rgb(69, 69, 245);
   background: rgb(69, 69, 245);
   border-radius: 4px;
+}
+
+.default-button:focus {
+  outline: none;
+}
+
+.default-button.btn-large {
+  padding: 10px 35px;
 }
 
 .default-button:disabled {

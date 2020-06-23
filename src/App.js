@@ -303,7 +303,7 @@ class App extends Component {
                 after_filter: filtered.length,
               })}
             </span>
-            <Button onClick={this.onSaveFile} className="save-btn">
+            <Button onClick={this.onSaveFile} className="btn-large save-btn">
               {translate('app.save')}
             </Button>
           </div>

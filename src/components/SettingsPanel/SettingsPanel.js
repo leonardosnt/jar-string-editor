@@ -121,7 +121,7 @@ export default class SettingsPanel extends Component {
           </div>
 
           <div className="actions">
-            <Button onClick={this.onSave} className="done-btn">
+            <Button onClick={this.onSave} className="btn-large done-btn">
               {translate('settings.apply')}
             </Button>
           </div>
