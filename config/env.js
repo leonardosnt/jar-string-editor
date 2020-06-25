@@ -79,6 +79,10 @@ function getClientEnvironment(publicUrl) {
         __BUILD_INFO__: JSON.stringify({
           date: new Date().toISOString(),
           commit: (() => {
+            if (process.env.NODE_ENV === 'development') {
+              return 'development';
+            }
+
             console.log('fetching last commit...');
 
             const cp = require('child_process');
