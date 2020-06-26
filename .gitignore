@@ -22,3 +22,5 @@ yarn-error.log*
 
 TODO.txt
 gh-deploy
+
+public/*.jar
