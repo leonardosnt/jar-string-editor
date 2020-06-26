@@ -62,7 +62,7 @@ input.string-input {
   z-index: 1000;
   right: 0;
   margin-right: 26px;
-  min-width: 250px;
+  min-width: 350px;
 }
 .string-entry .string-info-tooltip span {
   width: max-content;
