@@ -83,14 +83,14 @@ function getClientEnvironment(publicUrl) {
               return 'development';
             }
 
-            console.log('fetching last commit...');
+            console.log('fetching lastest commit...');
 
             const cp = require('child_process');
             const { stderr, stdout } = cp.spawnSync('git', [
               'log',
               '-n',
               '1',
-              '--pretty=format:"%H"',
+              '--pretty=format:%H',
             ]);
 
             if (stderr.toString()) {
@@ -99,9 +99,10 @@ function getClientEnvironment(publicUrl) {
             }
 
             const commitHash = stdout.toString();
+            
+            console.log('latest commit hash:', commitHash);
 
-            // remove quotes
-            return commitHash.substring(1, commitHash.length - 1);
+            return commitHash;
           })(),
         }),
       }
