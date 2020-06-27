@@ -87,6 +87,9 @@ class App extends Component {
       this.currentStringSearcher.stop();
     }
 
+    this.selectedFile = undefined;
+    this.jdecWindow = undefined;
+
     this.setState({ context: { ...App.INITIAL_CONTEXT } });
   };
 
@@ -203,6 +206,9 @@ class App extends Component {
       window.ga('send', 'event', 'file', 'select', file.size);
     }
 
+    // TODO: not sure if this should be stored on state...
+    this.selectedFile = file;
+
     return JSZip.loadAsync(file).then(jar => this.onJarLoaded(jar, file.name));
   };
 
@@ -249,6 +255,37 @@ class App extends Component {
     const filterEnd = performance.now();
 
     return { filtered, took: filterEnd - filterStart };
+  };
+
+  handleViewClass = (string) => {
+    const JDEC_URL = process.env.REACT_APP_JDEC_DEV_URL || 'https://jdec.app';
+    
+    const payload = {
+      action: 'open',
+      jarFile: this.selectedFile,
+      path: string.fileName,
+      highlight: string.value
+    };
+
+    if (this.jdecWindow === undefined || this.jdecWindow.closed) {
+      const handleAppReady = e => {
+        const originHost = new URL(e.origin).host;
+        const jdecHost = new URL(JDEC_URL).host;
+
+        if (originHost !== jdecHost || e.data !== 'app-ready') return;
+
+        window.removeEventListener('message', handleAppReady);
+
+        this.jdecWindow.postMessage(payload, JDEC_URL);
+      };
+      window.addEventListener('message', handleAppReady);
+
+      // TODO: not sure if this should be stored on state...
+      this.jdecWindow = window.open(`${JDEC_URL}?jse`, 'jdec');
+    } else {
+      this.jdecWindow.focus();
+      this.jdecWindow.postMessage(payload, JDEC_URL);
+    }
   };
 
   renderAppContainer = children => (
@@ -309,7 +346,7 @@ class App extends Component {
           </div>
         </div>
 
-        <StringList onStringChanged={this.onStringChanged} strings={filtered} />
+        <StringList handleViewClass={this.handleViewClass} onStringChanged={this.onStringChanged} strings={filtered} />
       </div>
     );
   }

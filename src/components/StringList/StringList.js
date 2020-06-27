@@ -57,6 +57,7 @@ export default class StringList extends Component {
                 index={index}
                 onChanged={this.props.onStringChanged}
                 string={string}
+                handleViewClass={this.props.handleViewClass}
               />
             );
           })}

@@ -34,6 +34,7 @@
       "line": "Line Number: {{lineNumber}}",
       "context": "Context: {{context}}"
     },
-    "load_more": "Load more"
+    "load_more": "Load more",
+    "view_class_file": "Open class file on JDec"
   }
 }

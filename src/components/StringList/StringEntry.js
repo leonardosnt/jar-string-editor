@@ -60,6 +60,13 @@ export default class StringEntry extends Component {
   onInputBlur = () => {
     this.setState({ focused: false });
   };
+  
+  handleViewClass = () => {
+    const { string, handleViewClass } = this.props;
+    if (typeof handleViewClass === "function") {
+      handleViewClass(string);
+    }
+  };
 
   render() {
     const { string } = this.props;
@@ -98,7 +105,7 @@ export default class StringEntry extends Component {
       <div className="string-entry">
         {element}
         <div className="string-info">
-          <StringInfo string={string} />
+          <StringInfo string={string} handleViewClass={this.handleViewClass} />
           <InfoIcon />
         </div>
       </div>
@@ -106,7 +113,7 @@ export default class StringEntry extends Component {
   }
 }
 
-const StringInfo = ({ string: { location, context } }) => (
+const StringInfo = ({ string: { location, context }, handleViewClass }) => (
   <div className="string-info-tooltip">
     <span>
       {translate('app.string_info.class', {
@@ -132,5 +139,8 @@ const StringInfo = ({ string: { location, context } }) => (
         })}
       </span>
     )}
+    <div className="view-class">
+      <button className="default-button" onClick={handleViewClass}>{translate('app.view_class_file')}</button>
+    </div>
   </div>
 );

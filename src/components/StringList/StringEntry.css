@@ -81,3 +81,12 @@ input.string-input {
 .string-entry .string-info-tooltip span {
   display: block;
 }
+
+.view-class {
+  margin-top: 2px;
+}
+
+.view-class > button {
+  float: right;
+  padding: 3px 5px;
+}
