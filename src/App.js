@@ -105,9 +105,7 @@ class App extends Component {
       })
       .then(() => (target.disabled = false));
 
-    if (window.ga) {
-      window.ga('send', 'event', 'file', 'save');
-    }
+    gaEvent('file', 'save');
   };
 
   onJarLoaded = (jar, selectedFileName) => {
@@ -202,9 +200,7 @@ class App extends Component {
   };
 
   onFileSelected = file => {
-    if (window.ga) {
-      window.ga('send', 'event', 'file', 'select', file.size);
-    }
+    gaEvent('file', 'select');
 
     // TODO: not sure if this should be stored on state...
     this.selectedFile = file;
@@ -286,6 +282,8 @@ class App extends Component {
       this.jdecWindow.focus();
       this.jdecWindow.postMessage(payload, JDEC_URL);
     }
+
+    gaEvent('misc', 'view-class');
   };
 
   renderAppContainer = children => (
@@ -410,11 +408,17 @@ const Footer = () => (
   </div>
 );
 
+function gaEvent(category, action, label, value) {
+  if (typeof window.ga === "function") {
+    window.ga('send', 'event',  category, action, label, value);
+  }
+}
+
 window.__BUILD_INFO__ = process.env.__BUILD_INFO__;
 
 Settings.observe(oldSettings => {
   if (oldSettings.language === Settings.language || !window.ga) return;
-  window.ga('send', 'event', 'language', 'change', Settings.language);
+  gaEvent('language', 'change', Settings.language);
 });
 
 export default App;
