@@ -91,7 +91,9 @@ export default class SettingsPanel extends Component {
   };
 
   onKeyPress = (e) => {
-    if (e.key === 'Enter') this.toggle();
+    if (e.key === 'Enter' || e.key === " " || e.key === "Spacebar") {
+      this.toggle();
+    }
   };
 
   render() {

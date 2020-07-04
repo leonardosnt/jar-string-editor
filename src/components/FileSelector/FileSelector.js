@@ -91,7 +91,7 @@ export default class FileSelector extends Component {
   };
 
   onKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === " " || e.key === "Spacebar") {
       // Kinda hack but it works.
       // TODO: Maybe update react-dropzone to use it's new api?
       this.dropzoneRef.current.onClick(e);
