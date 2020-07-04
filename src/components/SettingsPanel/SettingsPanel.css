@@ -57,8 +57,14 @@
   z-index: 10000;
 }
 
-.settings-container .toggle-icon:hover {
+/*
+ * TODO: we should only apply the focus style if the user has used the keyboard,
+ * and not when the user has clicked, as it doesn't like really good...
+ */
+.settings-container .toggle-icon:hover, .settings-container .toggle-icon:focus {
+  outline: none;
   background: rgba(215, 215, 219, 0.6);
+  border-radius: 3px;
 }
 
 .settings-wrapper section {

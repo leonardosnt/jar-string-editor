@@ -12,6 +12,15 @@
   cursor: pointer;
 
   user-select: none;
+
+  transition: box-shadow 0.3s ease;
+}
+.file-selector .drag-area:hover {
+  box-shadow: 0 1px 6px 0 rgba(13, 13, 14, 0.3);
+}
+.file-selector .drag-area:focus {
+  box-shadow: 0 1px 6px 0 rgba(13, 13, 14, 0.4);
+  outline: none;
 }
 .file-selector .drag-area p {
   padding-top: 10px;
