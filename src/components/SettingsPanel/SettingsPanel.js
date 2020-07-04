@@ -90,6 +90,10 @@ export default class SettingsPanel extends Component {
     this._removeClickOutsideListener();
   };
 
+  onKeyPress = (e) => {
+    if (e.key === 'Enter') this.toggle();
+  };
+
   render() {
     const { hidden } = this.state;
 
@@ -101,7 +105,7 @@ export default class SettingsPanel extends Component {
 
     return (
       <div className="settings-container">
-        <span onClick={this.toggle} className="toggle-icon">
+        <span onClick={this.toggle} onKeyPress={this.onKeyPress} className="toggle-icon" tabIndex="2">
           {settingsToggleIcon}
         </span>
 
