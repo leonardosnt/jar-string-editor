@@ -20,6 +20,7 @@ import mitt from 'mitt';
 import {
   getAttribute,
   getUtf8String,
+  extractMethodInfoConstants,
 } from './util/util';
 import {
   JavaClassFileReader,
@@ -121,7 +122,7 @@ export default class StringReader {
       .map(method => {
         const codeAttribute = getAttribute(classFile, method, 'Code');
 
-        if (!codeAttribute) {
+        if (!codeAttribute || this._isEnumClassInit(classFile, method)) {
           return undefined;
         }
 
@@ -180,4 +181,16 @@ export default class StringReader {
     }
   }
 
+  /**
+   * Checks if the method is a class initializer of an Enum.
+   *
+   * This is used to ignore strings found inside class initializers in Enums
+   * because they are usually compiler-generated strings.
+   */
+  _isEnumClassInit(classFile, method) {
+    if ((classFile.access_flags & Modifier.ENUM) === 0) return false;
+
+    const { name, descriptor } = extractMethodInfoConstants(method, classFile.constant_pool);
+    return name === "<clinit>" && descriptor === "()V";
+  }
 }
