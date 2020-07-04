@@ -24,7 +24,6 @@
   "app": {
     "collecting_strings": "Collecting strings... {{progress}}% ({{numDone}}/{{numClasses}} classes)",
     "created_by": "Created with a lot of {{coffee}} by {{link}}.",
-    "old_version": "Didn't like the new version? Click here to use the old one.",
     "search": "Search",
     "save": "Save",
     "strings_info": "{{found}} strings found | {{after_filter}} after filter ({{took}}ms)",

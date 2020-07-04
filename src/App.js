@@ -255,7 +255,7 @@ class App extends Component {
 
   handleViewClass = (string) => {
     const JDEC_URL = process.env.REACT_APP_JDEC_DEV_URL || 'https://jdec.app';
-    
+
     const payload = {
       action: 'open',
       jarFile: this.selectedFile,
@@ -397,14 +397,6 @@ const Footer = () => (
         </Link>
       ),
     })}
-
-    <div style={{ paddingTop: '.6em', fontSize: '.75em' }}>
-      <b>
-        <Link href="https://jar-string-editor-v1.now.sh/">
-          {translate('app.old_version')}
-        </Link>
-      </b>
-    </div>
   </div>
 );
 
