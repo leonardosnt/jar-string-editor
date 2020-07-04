@@ -371,7 +371,7 @@ const Link = props => (
     target="_blank"
     rel="noopener noreferrer"
     style={{
-      color: 'rgba(0,0,0,.9)',
+      color: 'rgba(0, 45, 99, 0.9)',
       textDecoration: 'none',
     }}
     {...props}

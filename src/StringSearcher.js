@@ -115,7 +115,7 @@ export default class StringReader {
      * Here we store the constantIndex of the strings we already found.
      * It's used because the same string can be referenced many times in different methods.
      */
-    const alreadyMappedStrings = new Set(); // TODO: better name
+    const alreadyMappedStrings = new Set();
 
     const stringsByMethod = classFile.methods
       .filter(method => (method.access_flags & Modifier.ABSTRACT) === 0)
@@ -151,8 +151,7 @@ export default class StringReader {
             continue;
           }
 
-          // Check if this string was already mapped.
-          // If it is, that means we already emitted an event for it
+          // Check if this string was already "found" in this file.
           if (alreadyMappedStrings.has(constantIndex)) {
             continue;
           }
@@ -164,7 +163,6 @@ export default class StringReader {
             instructionIndex: i,
           });
 
-          // 'Mark' as found
           alreadyMappedStrings.add(constantIndex);
         }
 
