@@ -35,10 +35,10 @@ export function getAttribute(classFile, source, attributeName) {
     throw new Error('target does not have attributes');
   }
 
-  return attributes.filter(attr => {
+  return attributes.find(attr => {
     const nameBytes = classFile.constant_pool[attr.attribute_name_index].bytes;
     return utf8ByteArrayToString(nameBytes) === attributeName;
-  })[0];
+  });
 }
 
 export function getInstructionLineNumber(classFile, method, instruction) {
