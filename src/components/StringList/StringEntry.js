@@ -60,7 +60,7 @@ export default class StringEntry extends Component {
   onInputBlur = () => {
     this.setState({ focused: false });
   };
-  
+
   handleViewClass = () => {
     const { string, handleViewClass } = this.props;
     if (typeof handleViewClass === "function") {
@@ -104,7 +104,7 @@ export default class StringEntry extends Component {
     return (
       <div className="string-entry">
         {element}
-        <div className="string-info">
+        <div className="string-info" tabIndex="0">
           <StringInfo string={string} handleViewClass={this.handleViewClass} />
           <InfoIcon />
         </div>
