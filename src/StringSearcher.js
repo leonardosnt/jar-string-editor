@@ -121,7 +121,7 @@ export default class StringReader {
       .map(method => {
         const codeAttribute = getAttribute(classFile, method, 'Code');
 
-        if (codeAttribute === undefined || codeAttribute.length === 0) {
+        if (!codeAttribute) {
           return undefined;
         }
 
