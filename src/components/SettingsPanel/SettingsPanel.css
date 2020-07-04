@@ -3,6 +3,10 @@
   transform: translateX(100%);
 }
 
+.settings-container .sidebar.hidden .settings-wrapper {
+  visibility: hidden;
+}
+
 .settings-container .sidebar .actions .done-btn {
   position: fixed;
   bottom: 14px;
@@ -38,6 +42,9 @@
 
 .settings-container .sidebar .settings-wrapper {
   margin: 40px;
+
+  visibility: visible;
+  transition: visibility 0.4s
 }
 
 .settings-container .toggle-icon {
