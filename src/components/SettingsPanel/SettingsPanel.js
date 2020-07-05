@@ -137,14 +137,13 @@ export default class SettingsPanel extends Component {
   }
 
   _onClickOutside = e => {
-    for (const element of e.path) {
-      if (
-        element.className === 'settings-container' ||
-        element.className === 'settings-wrapper'
-      )
-        return;
-    }
-    this.hide();
+    const path = e.path || (e.composedPath && e.composedPath());
+
+    // If no path, just don't do anything... (Should not happen)
+    if (!path) return;
+
+    const clickedInside = path.find(e => e.className === 'settings-container');
+    if (!clickedInside) this.hide();
   };
 
   _removeClickOutsideListener = () => {

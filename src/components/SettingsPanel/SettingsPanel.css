@@ -5,6 +5,7 @@
 
 .settings-container .sidebar.hidden .settings-wrapper {
   visibility: hidden;
+  transition: visibility 0.4s
 }
 
 .settings-container .sidebar .actions .done-btn {
@@ -44,7 +45,6 @@
   margin: 40px;
 
   visibility: visible;
-  transition: visibility 0.4s
 }
 
 .settings-container .toggle-icon {
