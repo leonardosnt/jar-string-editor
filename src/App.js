@@ -413,4 +413,7 @@ Settings.observe(oldSettings => {
   gaEvent('language', 'change', Settings.language);
 });
 
+window.addEventListener('mousedown', e => document.body.classList.add('using-mouse'));
+window.addEventListener('keydown', e => e.key === 'Tab' && document.body.classList.remove('using-mouse'));
+
 export default App;

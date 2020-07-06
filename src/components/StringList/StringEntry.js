@@ -44,6 +44,10 @@ export default class StringEntry extends Component {
     this.props.onChanged(target.value, string.id);
   };
 
+  onFakeInputFocus = (e) => {
+    this.setState({ focused: true });
+  };
+
   componentDidUpdate() {
     if (this.state.focused) {
       const { input } = this;
@@ -88,9 +92,8 @@ export default class StringEntry extends Component {
         />
       );
     } else {
-      // TODO: tab select? focus & allow to use enter to open the file selector
       element = (
-        <div onClick={this.onDivClick} className="string-input">
+        <div onClick={this.onDivClick} onFocus={this.onFakeInputFocus} className="string-input" tabIndex="0">
           <HighlightWords
             highlightClassName={'string-highlight'}
             searchWords={highlightWords}

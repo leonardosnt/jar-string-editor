@@ -3,7 +3,7 @@
   transform: translateX(100%);
 }
 
-.settings-container .sidebar.hidden .settings-wrapper {
+.settings-container .sidebar.hidden * {
   visibility: hidden;
   transition: visibility 0.4s
 }
@@ -57,11 +57,12 @@
   z-index: 10000;
 }
 
-/*
- * TODO: we should only apply the focus style if the user has used the keyboard,
- * and not when the user has clicked, as it doesn't like really good...
- */
-.settings-container .toggle-icon:hover, .settings-container .toggle-icon:focus {
+body.using-mouse .settings-container .toggle-icon:focus {
+  outline: none;
+}
+
+.settings-container .toggle-icon:hover,
+body:not(.using-mouse) .settings-container .toggle-icon:focus {
   outline: none;
   background: rgba(215, 215, 219, 0.6);
   border-radius: 3px;
