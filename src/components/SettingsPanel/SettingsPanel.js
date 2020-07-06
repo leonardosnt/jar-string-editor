@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,34 +16,34 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import settings from '../../settings';
-import { translate, languages, getCurrentLanguage } from '../../i18n/i18n';
+import settings from "../../settings";
+import { translate, languages, getCurrentLanguage } from "../../i18n/i18n";
 
-import SettingsOpenIcon from '../../icons/settings-open';
-import SettingsCloseIcon from '../../icons/settings-close';
-import CheckboxOption from './CheckboxOption';
-import SelectorOption from './SelectorOption';
-import { Button } from '../';
+import SettingsOpenIcon from "../../icons/settings-open";
+import SettingsCloseIcon from "../../icons/settings-close";
+import CheckboxOption from "./CheckboxOption";
+import SelectorOption from "./SelectorOption";
+import { Button } from "../";
 
-import './SettingsPanel.css';
+import "./SettingsPanel.css";
 
 const HideEmptyStringsOption = () => (
-  <CheckboxOption persistTo={settings} persistKey={'hideEmptyStrings'}>
-    {translate('settings.hide_empty_strings')}
+  <CheckboxOption persistTo={settings} persistKey={"hideEmptyStrings"}>
+    {translate("settings.hide_empty_strings")}
   </CheckboxOption>
 );
 
 const SortByContextOption = () => (
-  <CheckboxOption persistTo={settings} persistKey={'sortByContext'}>
-    {translate('settings.sort_by_context.desc')}
-    <small style={{ display: 'block', marginLeft: 5, marginTop: 5 }}>
-      {translate('settings.sort_by_context.order_desc')}
+  <CheckboxOption persistTo={settings} persistKey={"sortByContext"}>
+    {translate("settings.sort_by_context.desc")}
+    <small style={{ display: "block", marginLeft: 5, marginTop: 5 }}>
+      {translate("settings.sort_by_context.order_desc")}
       <ul style={{ paddingLeft: 30 }}>
-        <li>{translate('settings.sort_by_context.order_item.send_message')}</li>
+        <li>{translate("settings.sort_by_context.order_item.send_message")}</li>
         <li>
-          {translate('settings.sort_by_context.order_item.item_display_name')}
+          {translate("settings.sort_by_context.order_item.item_display_name")}
         </li>
       </ul>
     </small>
@@ -53,10 +53,10 @@ const SortByContextOption = () => (
 const LanguageSelectorOption = () => (
   <SelectorOption
     options={Object.keys(languages)}
-    label={translate('settings.select_language')}
+    label={translate("settings.select_language")}
     defaultValue={getCurrentLanguage()}
     persistTo={settings}
-    persistKey={'language'}
+    persistKey={"language"}
   />
 );
 
@@ -91,7 +91,7 @@ export default class SettingsPanel extends Component {
   };
 
   onKeyPress = (e) => {
-    if (e.key === 'Enter' || e.key === " " || e.key === "Spacebar") {
+    if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
       this.toggle();
     }
   };
@@ -111,24 +111,24 @@ export default class SettingsPanel extends Component {
           {settingsToggleIcon}
         </span>
 
-        <div className={'sidebar' + (hidden ? ' hidden' : '')}>
+        <div className={"sidebar" + (hidden ? " hidden" : '')}>
           <div className="settings-wrapper">
-            <h4>{translate('settings.title')}</h4>
+            <h4>{translate("settings.title")}</h4>
 
-            <h5>{translate('settings.general')}</h5>
+            <h5>{translate("settings.general")}</h5>
 
             <HideEmptyStringsOption />
             <hr />
             <LanguageSelectorOption />
             <hr />
 
-            <h5>{translate('settings.bukkit_specific')}</h5>
+            <h5>{translate("settings.bukkit_specific")}</h5>
             <SortByContextOption />
           </div>
 
           <div className="actions">
             <Button onClick={this.onSave} className="btn-large done-btn">
-              {translate('settings.apply')}
+              {translate("settings.apply")}
             </Button>
           </div>
         </div>
@@ -142,15 +142,15 @@ export default class SettingsPanel extends Component {
     // If no path, just don't do anything... (Should not happen)
     if (!path) return;
 
-    const clickedInside = path.find(e => e.className === 'settings-container');
+    const clickedInside = path.find(e => e.className === "settings-container");
     if (!clickedInside) this.hide();
   };
 
   _removeClickOutsideListener = () => {
-    window.removeEventListener('click', this._onClickOutside);
+    window.removeEventListener("click", this._onClickOutside);
   };
 
   _addClickOutsideListener = () => {
-    window.addEventListener('click', this._onClickOutside);
+    window.addEventListener("click", this._onClickOutside);
   };
 }

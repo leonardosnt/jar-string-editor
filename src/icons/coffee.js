@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 export default () => (
   <svg
     height="16"
-    style={{ enableBackground: 'new 0 0 21.664 21.665' }}
+    style={{ enableBackground: "new 0 0 21.664 21.665" }}
     width="21.664px"
     version="1.1"
     viewBox="0 0 21.664 21.665"

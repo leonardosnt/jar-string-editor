@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { Component } from 'react';
-import HighlightWords from 'react-highlight-words';
+import React, { Component } from "react";
+import HighlightWords from "react-highlight-words";
 
-import { prettyMethodInfo } from '../../util/util.js';
+import { prettyMethodInfo } from "../../util/util.js";
 
-import InfoIcon from '../../icons/info';
+import InfoIcon from "../../icons/info";
 
-import './StringEntry.css';
-import { translate } from '../../i18n/i18n';
+import "./StringEntry.css";
+import { translate } from "../../i18n/i18n";
 
 export default class StringEntry extends Component {
   state = { focused: false };
@@ -95,7 +95,7 @@ export default class StringEntry extends Component {
       element = (
         <div onClick={this.onDivClick} onFocus={this.onFakeInputFocus} className="string-input" tabIndex="0">
           <HighlightWords
-            highlightClassName={'string-highlight'}
+            highlightClassName={"string-highlight"}
             searchWords={highlightWords}
             autoEscape={true}
             textToHighlight={value}
@@ -119,31 +119,31 @@ export default class StringEntry extends Component {
 const StringInfo = ({ string: { location, context }, handleViewClass }) => (
   <div className="string-info-tooltip">
     <span>
-      {translate('app.string_info.class', {
+      {translate("app.string_info.class", {
         className: <b key="className">{location.className}</b>,
       })}
     </span>
     <span>
-      {translate('app.string_info.method', {
+      {translate("app.string_info.method", {
         method: <b key="method">{prettyMethodInfo(location.method)}</b>,
       })}
     </span>
     {location.lineNumber && (
       <span>
-        {translate('app.string_info.line', {
+        {translate("app.string_info.line", {
           lineNumber: <b key="line">{location.lineNumber}</b>,
         })}
       </span>
     )}
     {context && (
       <span>
-        {translate('app.string_info.context', {
+        {translate("app.string_info.context", {
           context: <b key="context">{context}</b>,
         })}
       </span>
     )}
     <div className="view-class">
-      <button className="default-button" onClick={handleViewClass}>{translate('app.view_class_file')}</button>
+      <button className="default-button" onClick={handleViewClass}>{translate("app.view_class_file")}</button>
     </div>
   </div>
 );

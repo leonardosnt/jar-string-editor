@@ -16,19 +16,19 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import mitt from 'mitt';
+import mitt from "mitt";
 import {
   getAttribute,
   getUtf8String,
   extractMethodInfoConstants,
-} from './util/util';
+} from "./util/util";
 import {
   JavaClassFileReader,
   Modifier,
   InstructionParser,
   Opcode,
   ConstantType,
-} from 'java-class-tools';
+} from "java-class-tools";
 
 /**
  * This class will emit the following events:
@@ -57,13 +57,13 @@ export default class StringReader {
    * @param {JSZip} jar - The jar file
    */
   searchInJar(jar) {
-    const classes = jar.filter(path => path.endsWith('.class'));
+    const classes = jar.filter(path => path.endsWith(".class"));
 
     /**
      * We process the class files sequentially to use less memory (JSZIP uses a lot of memory)
-     * and to be able to 'give feedback to the UI' (i.e. display how many class files have been read).
+     * and to be able to "give feedback to the UI" (i.e. display how many class files have been read).
      *
-     * It's like 'promise series'
+     * It's like "promise series"
      */
     let currentClassIndex = 0;
 
@@ -72,18 +72,18 @@ export default class StringReader {
 
       // If currentClassFile is undefined, we are done
       if (currentClassFile === undefined || this._stopped) {
-        this.emit('finish', this._result);
+        this.emit("finish", this._result);
         return;
       }
 
       // Unzip the class file and search on it
       currentClassFile
-        .async('arraybuffer')
+        .async("arraybuffer")
         .then(classData => {
           try {
             this.searchInClass(currentClassFile.name, classData);
           } catch (e) {
-            console.error(`Failed to search in class '${currentClassFile.name}'`);
+            console.error(`Failed to search in class "${currentClassFile.name}"`);
             console.error(e);
           }
         })
@@ -92,7 +92,7 @@ export default class StringReader {
       // Every 100 (currently hardcoded) classes we emit an event
       // to update the UI
       if (currentClassIndex && currentClassIndex % 100 === 0) {
-        this.emit('read_count', currentClassIndex);
+        this.emit("read_count", currentClassIndex);
       }
     };
 
@@ -120,7 +120,7 @@ export default class StringReader {
     const stringsByMethod = classFile.methods
       .filter(method => (method.access_flags & Modifier.ABSTRACT) === 0)
       .map(method => {
-        const codeAttribute = getAttribute(classFile, method, 'Code');
+        const codeAttribute = getAttribute(classFile, method, "Code");
 
         if (!codeAttribute || this._isEnumClassInit(classFile, method)) {
           return undefined;

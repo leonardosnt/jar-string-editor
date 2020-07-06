@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,29 +27,29 @@ export function parseFieldType(descriptor) {
   let [char] = descriptor;
   let charIndex = 1;
 
-  if (char === 'L') {
-    const classNameEnd = descriptor.indexOf(';', charIndex);
+  if (char === "L") {
+    const classNameEnd = descriptor.indexOf(";", charIndex);
     return {
-      type: 'class',
+      type: "class",
       value: descriptor.substring(charIndex, classNameEnd),
     };
   }
 
   // ArrayType
-  if (char === '[') {
+  if (char === "[") {
     let dimensions = 1;
 
-    while (descriptor[charIndex++] === '[') {
+    while (descriptor[charIndex++] === "[") {
       dimensions++;
     }
 
     const arrayType = parseFieldType(descriptor.substring(charIndex - 1));
 
     return {
-      type: 'array',
+      type: "array",
       dimensions,
       arrayType,
-      value: arrayType.value + '[]'.repeat(dimensions),
+      value: arrayType.value + "[]".repeat(dimensions),
     };
   }
 
@@ -57,29 +57,29 @@ export function parseFieldType(descriptor) {
   let value;
 
   switch (char) {
-    case 'B':
-      value = 'byte';
+    case "B":
+      value = "byte";
       break;
-    case 'C':
-      value = 'char';
+    case "C":
+      value = "char";
       break;
-    case 'D':
-      value = 'double';
+    case "D":
+      value = "double";
       break;
-    case 'F':
-      value = 'float';
+    case "F":
+      value = "float";
       break;
-    case 'I':
-      value = 'int';
+    case "I":
+      value = "int";
       break;
-    case 'J':
-      value = 'long';
+    case "J":
+      value = "long";
       break;
-    case 'S':
-      value = 'short';
+    case "S":
+      value = "short";
       break;
-    case 'Z':
-      value = 'boolean';
+    case "Z":
+      value = "boolean";
       break;
 
     default:
@@ -88,7 +88,7 @@ export function parseFieldType(descriptor) {
       );
   }
 
-  return { type: 'primitive', value };
+  return { type: "primitive", value };
 }
 
 /**
@@ -99,11 +99,11 @@ export function parseFieldType(descriptor) {
  */
 function sizeOfType(fieldType) {
   switch (fieldType.type) {
-    case 'primitive':
+    case "primitive":
       return 1;
-    case 'class':
+    case "class":
       return 2 + fieldType.value.length;
-    case 'array':
+    case "array":
       return 1 * fieldType.dimensions + sizeOfType(fieldType.arrayType);
     default:
       throw new Error(`Unexpected type: ${fieldType}`);
@@ -122,7 +122,7 @@ export function parseMethodDescriptor(descriptor) {
   let charIndex = 1; // Ignore (
   let char = descriptor[charIndex];
 
-  while (char !== undefined && char !== ')') {
+  while (char !== undefined && char !== ")") {
     const fieldType = parseFieldType(descriptor.substring(charIndex));
     charIndex += sizeOfType(fieldType);
     char = descriptor[charIndex];
@@ -133,8 +133,8 @@ export function parseMethodDescriptor(descriptor) {
   return {
     parameters,
     returnType:
-      returnType === 'V'
-        ? { type: 'void', value: 'void' }
+      returnType === "V"
+        ? { type: "void", value: "void" }
         : parseFieldType(returnType),
   };
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { utf8ByteArrayToString } from 'utf8-string-bytes';
-import { parseMethodDescriptor } from './descriptor-parser';
-import { Opcode } from 'java-class-tools';
+import { utf8ByteArrayToString } from "utf8-string-bytes";
+import { parseMethodDescriptor } from "./descriptor-parser";
+import { Opcode } from "java-class-tools";
 
 /**
  * Get an attribute by its name.
@@ -32,7 +32,7 @@ export function getAttribute(classFile, source, attributeName) {
   const { attributes } = source;
 
   if (attributes === undefined) {
-    throw new Error('target does not have attributes');
+    throw new Error("target does not have attributes");
   }
 
   return attributes.find(attr => {
@@ -44,8 +44,8 @@ export function getAttribute(classFile, source, attributeName) {
 export function getInstructionLineNumber(classFile, method, instruction) {
   let lineNumber = undefined;
 
-  const codeAttr = getAttribute(classFile, method, 'Code');
-  const lineNumberTable = getAttribute(classFile, codeAttr, 'LineNumberTable');
+  const codeAttr = getAttribute(classFile, method, "Code");
+  const lineNumberTable = getAttribute(classFile, codeAttr, "LineNumberTable");
   const { bytecodeOffset } = instruction;
 
   if (lineNumberTable !== undefined) {
@@ -73,11 +73,11 @@ export function prettyMethodInfo({ name, descriptor }) {
     .map(
       p =>
         p.value.replace(
-          'java/lang/',
+          "java/lang/",
           ''
         ) /* remove java.lang package if present */
     )
-    .join(', ');
+    .join(", ");
 
   return `${parsedDescriptor.returnType.value} ${name}(${params})`;
 }
@@ -88,7 +88,7 @@ export function extractClassName(index, constant_pool) {
 
 export function extractMethodInfoConstants(methodInfoOrIndex, constant_pool) {
   const methodInfo =
-    typeof methodInfoOrIndex === 'number'
+    typeof methodInfoOrIndex === "number"
       ? constant_pool[methodInfoOrIndex]
       : methodInfoOrIndex;
   return {
@@ -105,7 +105,7 @@ export function getUtf8String(constant_pool, index) {
     poolEntry = constant_pool[poolEntry.string_index];
   } else if (poolEntry.tag !== 1) {
     // CONSTANT_Utf8_info
-    throw new Error('constant_pool[index] does not represent a string.');
+    throw new Error("constant_pool[index] does not represent a string.");
   }
 
   return utf8ByteArrayToString(poolEntry.bytes);
@@ -135,12 +135,12 @@ export function getStringContext(constantPool, instructions, index) {
     const fullMethodDesc = `${className}#${name}${descriptor}`;
 
     switch (fullMethodDesc) {
-      case 'org/bukkit/command/CommandSender#sendMessage(Ljava/lang/String;)V':
-      case 'org/bukkit/entity/Player#sendMessage(Ljava/lang/String;)V':
-        return 'SendMessage';
+      case "org/bukkit/command/CommandSender#sendMessage(Ljava/lang/String;)V":
+      case "org/bukkit/entity/Player#sendMessage(Ljava/lang/String;)V":
+        return "SendMessage";
 
-      case 'org/bukkit/inventory/meta/ItemMeta#setDisplayName(Ljava/lang/String;)V':
-        return 'ItemDisplayName';
+      case "org/bukkit/inventory/meta/ItemMeta#setDisplayName(Ljava/lang/String;)V":
+        return "ItemDisplayName";
 
       default:
         return undefined;

@@ -16,30 +16,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { Component } from 'react';
-import update from 'react-addons-update';
-import debounce from 'lodash.debounce';
-import JSZip from 'jszip';
+import React, { Component } from "react";
+import update from "react-addons-update";
+import debounce from "lodash.debounce";
+import JSZip from "jszip";
 
-import { Button, SettingsPanel, FileSelector, StringList } from './components';
+import { Button, SettingsPanel, FileSelector, StringList } from "./components";
 import {
   getStringContext,
   extractClassName,
   extractMethodInfoConstants,
   getInstructionLineNumber,
-} from './util/util';
-import { stringContains } from './util/string-util';
-import { saveAs } from 'file-saver';
-import { translate } from './i18n/i18n';
+} from "./util/util";
+import { stringContains } from "./util/string-util";
+import { saveAs } from "file-saver";
+import { translate } from "./i18n/i18n";
 
-import StringSearcher from './StringSearcher';
-import StringWriter from './StringWriter';
-import Settings from './settings';
+import StringSearcher from "./StringSearcher";
+import StringWriter from "./StringWriter";
+import Settings from "./settings";
 
-import GearSvg from './icons/gear';
-import CoffeIcon from './icons/coffee';
+import GearSvg from "./icons/gear";
+import CoffeIcon from "./icons/coffee";
 
-import './App.css';
+import "./App.css";
 
 class App extends Component {
   static INITIAL_CONTEXT = Object.freeze({
@@ -101,16 +101,16 @@ class App extends Component {
 
     StringWriter.write(context.loadedJar, context.strings)
       .then(blob => {
-        saveAs(blob, context.selectedFileName || 'Translated.jar');
+        saveAs(blob, context.selectedFileName || "Translated.jar");
       })
       .then(() => (target.disabled = false));
 
-    gaEvent('file', 'save');
+    gaEvent("file", "save");
   };
 
   onJarLoaded = (jar, selectedFileName) => {
     const stringSearcher = new StringSearcher();
-    const numClasses = jar.filter(path => path.endsWith('.class')).length;
+    const numClasses = jar.filter(path => path.endsWith(".class")).length;
 
     // Used to stop the current search if needed.
     this.currentStringSearcher = stringSearcher;
@@ -118,7 +118,7 @@ class App extends Component {
     this.setState(state =>
       update(state, {
         loadInfo: {
-          $set: translate('app.collecting_strings', {
+          $set: translate("app.collecting_strings", {
             progress: 0,
             numDone: 0,
             numClasses,
@@ -131,9 +131,9 @@ class App extends Component {
       })
     );
 
-    stringSearcher.on('read_count', numDone => {
+    stringSearcher.on("read_count", numDone => {
       this.setState({
-        loadInfo: translate('app.collecting_strings', {
+        loadInfo: translate("app.collecting_strings", {
           progress: (numDone / numClasses * 100).toFixed(1),
           numDone,
           numClasses,
@@ -141,7 +141,7 @@ class App extends Component {
       });
     });
 
-    stringSearcher.on('finish', this.onStringSearcherFinish);
+    stringSearcher.on("finish", this.onStringSearcherFinish);
 
     stringSearcher.searchInJar(jar);
   };
@@ -200,7 +200,7 @@ class App extends Component {
   };
 
   onFileSelected = file => {
-    gaEvent('file', 'select');
+    gaEvent("file", "select");
 
     // TODO: not sure if this should be stored on state...
     this.selectedFile = file;
@@ -240,7 +240,7 @@ class App extends Component {
         continue;
       }
 
-      const words = context.filter.split(' ');
+      const words = context.filter.split(" ");
       const foundAllWords = !words.find(w => !stringContains(value, w));
 
       if (foundAllWords) {
@@ -254,10 +254,10 @@ class App extends Component {
   };
 
   handleViewClass = (string) => {
-    const JDEC_URL = process.env.REACT_APP_JDEC_DEV_URL || 'https://jdec.app';
+    const JDEC_URL = process.env.REACT_APP_JDEC_DEV_URL || "https://jdec.app";
 
     const payload = {
-      action: 'open',
+      action: "open",
       jarFile: this.selectedFile,
       path: string.fileName,
       highlight: string.value
@@ -268,22 +268,22 @@ class App extends Component {
         const originHost = new URL(e.origin).host;
         const jdecHost = new URL(JDEC_URL).host;
 
-        if (originHost !== jdecHost || e.data !== 'app-ready') return;
+        if (originHost !== jdecHost || e.data !== "app-ready") return;
 
-        window.removeEventListener('message', handleAppReady);
+        window.removeEventListener("message", handleAppReady);
 
         this.jdecWindow.postMessage(payload, JDEC_URL);
       };
-      window.addEventListener('message', handleAppReady);
+      window.addEventListener("message", handleAppReady);
 
       // TODO: not sure if this should be stored on state...
-      this.jdecWindow = window.open(`${JDEC_URL}?jse`, 'jdec');
+      this.jdecWindow = window.open(`${JDEC_URL}?jse`, "jdec");
     } else {
       this.jdecWindow.focus();
       this.jdecWindow.postMessage(payload, JDEC_URL);
     }
 
-    gaEvent('misc', 'view-class');
+    gaEvent("misc", "view-class");
   };
 
   renderAppContainer = children => (
@@ -327,19 +327,19 @@ class App extends Component {
       <div>
         <div className="header">
           <div className="search">
-            <div>{translate('app.search')}</div>
+            <div>{translate("app.search")}</div>
             <input onChange={this.onSearchChange} />
           </div>
           <div className="info">
             <span>
-              {translate('app.strings_info', {
+              {translate("app.strings_info", {
                 took: took.toFixed(2),
                 found: context.strings.length,
                 after_filter: filtered.length,
               })}
             </span>
             <Button onClick={this.onSaveFile} className="btn-large save-btn">
-              {translate('app.save')}
+              {translate("app.save")}
             </Button>
           </div>
         </div>
@@ -371,8 +371,8 @@ const Link = props => (
     target="_blank"
     rel="noopener noreferrer"
     style={{
-      color: 'rgba(0, 45, 99, 0.9)',
-      textDecoration: 'none',
+      color: "rgba(0, 45, 99, 0.9)",
+      textDecoration: "none",
     }}
     {...props}
   >
@@ -383,13 +383,13 @@ const Link = props => (
 const Footer = () => (
   <div
     style={{
-      textAlign: 'center',
-      padding: '1em',
-      paddingTop: '1.5em',
-      color: 'rgba(0,0,0,.8)',
+      textAlign: "center",
+      padding: "1em",
+      paddingTop: "1.5em",
+      color: "rgba(0,0,0,.8)",
     }}
   >
-    {translate('app.created_by', {
+    {translate("app.created_by", {
       coffee: <CoffeIcon key="coffee" />,
       link: (
         <Link key="link" href="https://github.com/leonardosnt">
@@ -402,7 +402,7 @@ const Footer = () => (
 
 function gaEvent(category, action, label, value) {
   if (typeof window.ga === "function") {
-    window.ga('send', 'event',  category, action, label, value);
+    window.ga("send", "event",  category, action, label, value);
   }
 }
 
@@ -410,10 +410,10 @@ window.__BUILD_INFO__ = process.env.__BUILD_INFO__;
 
 Settings.observe(oldSettings => {
   if (oldSettings.language === Settings.language || !window.ga) return;
-  gaEvent('language', 'change', Settings.language);
+  gaEvent("language", "change", Settings.language);
 });
 
-window.addEventListener('mousedown', e => document.body.classList.add('using-mouse'));
-window.addEventListener('keydown', e => e.key === 'Tab' && document.body.classList.remove('using-mouse'));
+window.addEventListener("mousedown", e => document.body.classList.add("using-mouse"));
+window.addEventListener("keydown", e => e.key === "Tab" && document.body.classList.remove("using-mouse"));
 
 export default App;

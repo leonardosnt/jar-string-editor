@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -71,23 +71,23 @@ const compile = text => {
   /**
    * Convert tokens to an array js values
    * E.g
-   *  ['Hello, ', {varName: 'name'}] ==> ['Hello, ', vars['name']]
+   *  ["Hello, ", {varName: "name"}] ==> ["Hello, ", vars["name"]]
    */
   const arrayValues = tokens
     .map(token => {
       if (token.varName) {
         const { varName } = token;
-        // (vars['varName'] || '{{varName}}')
-        return `(vars['${varName}'] == undefined ? '{{${varName}}}' : vars['${varName}'])`;
+        // (vars["varName"] || "{{varName}}")
+        return `(vars["${varName}"] == undefined ? "{{${varName}}}" : vars["${varName}"])`;
       }
       // string
-      return `'${token}'`;
+      return `"${token}"`;
     })
-    .join(', ');
+    .join(", ");
 
   /* eslint-disable no-new-func */
   return new Function(
-    'vars',
+    "vars",
     `
     vars = vars || {};
     return [${arrayValues}];
@@ -96,9 +96,9 @@ const compile = text => {
 };
 
 const isOpenVarAt = (text, pos) =>
-  text.charAt(pos) === '{' && text.charAt(pos + 1) === '{';
+  text.charAt(pos) === "{" && text.charAt(pos + 1) === "{";
 
 const isCloseVarAt = (text, pos) =>
-  text.charAt(pos) === '}' && text.charAt(pos + 1) === '}';
+  text.charAt(pos) === "}" && text.charAt(pos + 1) === "}";
 
 export { compile };

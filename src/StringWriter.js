@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { stringToUtf8ByteArray } from 'utf8-string-bytes';
-import { JavaClassFileReader, JavaClassFileWriter } from 'java-class-tools';
+import { stringToUtf8ByteArray } from "utf8-string-bytes";
+import { JavaClassFileReader, JavaClassFileWriter } from "java-class-tools";
 
 export default class StringWriter {
   /**
@@ -45,7 +45,7 @@ export default class StringWriter {
       } else {
         classFilePromise = jar
           .file(fileName)
-          .async('arraybuffer')
+          .async("arraybuffer")
           .then(buf => classReader.read(buf));
         classFileMap.set(fileName, classFilePromise);
       }
@@ -73,7 +73,7 @@ export default class StringWriter {
 
     // We wait all ZipObject#async's promises then we re-compress the jar file
     return Promise.all(filePromises).then(() =>
-      jar.generateAsync({ type: 'blob', compression: 'DEFLATE' })
+      jar.generateAsync({ type: "blob", compression: "DEFLATE" })
     );
   }
 }

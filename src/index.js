@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
-import { render } from 'react-dom';
-import App from './App';
-import registerServiceWorker from './util/registerServiceWorker';
+import React from "react";
+import { render } from "react-dom";
+import App from "./App";
+import registerServiceWorker from "./util/registerServiceWorker";
 
-render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById("root"));
 registerServiceWorker();

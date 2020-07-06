@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import StringEntry from './StringEntry';
-import './StringList.css';
-import { translate } from '../../i18n/i18n';
+import StringEntry from "./StringEntry";
+import "./StringList.css";
+import { translate } from "../../i18n/i18n";
 
-import { Button } from '../';
+import { Button } from "../";
 
 export default class StringList extends Component {
   static LOAD_MORE_AMOUNT = 50;
@@ -65,7 +65,7 @@ export default class StringList extends Component {
         {remaining > 0 && (
           <div className="load-more-btn-container">
             <Button onClick={this.loadMore} className="btn-large">
-              {translate('app.load_more')} ({remaining})
+              {translate("app.load_more")} ({remaining})
             </Button>
           </div>
         )}

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,16 +16,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { Component } from 'react';
-import Dropzone from 'react-dropzone';
-import { translate } from '../../i18n/i18n';
-import UploadSvg from '../../icons/upload';
+import React, { Component } from "react";
+import Dropzone from "react-dropzone";
+import { translate } from "../../i18n/i18n";
+import UploadSvg from "../../icons/upload";
 
-import './FileSelector.css';
+import "./FileSelector.css";
 
 export default class FileSelector extends Component {
   state = {
-    status: 'SELECT',
+    status: "SELECT",
   };
   dropzoneRef = React.createRef();
 
@@ -33,16 +33,16 @@ export default class FileSelector extends Component {
     let { status } = this.state;
 
     if (rejectedFiles.length) {
-      status = 'NOT_A_JAR_FILE';
+      status = "NOT_A_JAR_FILE";
     } else if (acceptedFiles.length) {
       const [file] = acceptedFiles;
 
-      status = 'LOADING_FILE';
+      status = "LOADING_FILE";
 
       // We only care about the catch because we want to show an
       // error to the user if we can't load the file.
       this.props.onSelected(file).catch(error => {
-        this.setState({ status: 'FAILED_TO_LOAD', error });
+        this.setState({ status: "FAILED_TO_LOAD", error });
       });
 
       // Clear accepted files
@@ -59,21 +59,21 @@ export default class FileSelector extends Component {
 
   renderStatusMessage = status => {
     switch (status) {
-      case 'LOADING_FILE':
-        return <p>{translate('file_selector.loading')}</p>;
+      case "LOADING_FILE":
+        return <p>{translate("file_selector.loading")}</p>;
 
-      case 'NOT_A_JAR_FILE':
+      case "NOT_A_JAR_FILE":
         return (
           <p className="msg-danger">
-            {translate('file_selector.not_a_jar_file')}
+            {translate("file_selector.not_a_jar_file")}
           </p>
         );
 
-      case 'FAILED_TO_LOAD':
+      case "FAILED_TO_LOAD":
         return (
           <span>
             <p className="msg-danger">
-              {translate('file_selector.failed_to_load')}
+              {translate("file_selector.failed_to_load")}
             </p>
             {this.state.error && (
               <p className="msg-danger">{this.state.error.message}</p>
@@ -81,8 +81,8 @@ export default class FileSelector extends Component {
           </span>
         );
 
-      case 'SELECT':
-        return <p>{translate('file_selector.select')}</p>;
+      case "SELECT":
+        return <p>{translate("file_selector.select")}</p>;
 
       // Should never reach here
       default:
@@ -91,7 +91,7 @@ export default class FileSelector extends Component {
   };
 
   onKeyPress = (e) => {
-    if (e.key === 'Enter' || e.key === " " || e.key === "Spacebar") {
+    if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
       // Kinda hack but it works.
       // TODO: Maybe update react-dropzone to use it's new api?
       this.dropzoneRef.current.onClick(e);
@@ -108,8 +108,8 @@ export default class FileSelector extends Component {
       style: {},
       disablePreview: true,
       multiple: false,
-      accept: '.jar',
-      className: 'drag-area',
+      accept: ".jar",
+      className: "drag-area",
       tabIndex: 1,
       onKeyPress: this.onKeyPress
     };

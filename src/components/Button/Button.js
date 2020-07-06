@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import React from "react";
 
-import './Button.css';
+import "./Button.css";
 
 const Button = ({ children, ...props }) => (
-  <button {...props} className={'default-button ' + (props.className || '')}>
+  <button {...props} className={"default-button " + (props.className || '')}>
     {children}
   </button>
 );

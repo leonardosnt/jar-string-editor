@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import StringList from './StringList/StringList';
-import FileSelector from './FileSelector/FileSelector';
-import SettingsPanel from './SettingsPanel/SettingsPanel';
-import Button from './Button/Button';
+import StringList from "./StringList/StringList";
+import FileSelector from "./FileSelector/FileSelector";
+import SettingsPanel from "./SettingsPanel/SettingsPanel";
+import Button from "./Button/Button";
 
 export { Button, FileSelector, SettingsPanel, StringList };

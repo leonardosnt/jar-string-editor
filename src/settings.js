@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2017-2018 leonardosnt (leonrdsnt@gmail.com)
+ *  Copyright (C) 2017-2020 leonardosnt (leonrdsnt@gmail.com)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ function load() {
   // Safe load from localStorage.
   let settings;
   try {
-    settings = JSON.parse(localStorage.getItem('jse-settings'));
+    settings = JSON.parse(localStorage.getItem("jse-settings"));
   } catch (e) {
     console.error(e);
   }
@@ -43,7 +43,7 @@ function load() {
 
 function copyDefaults(from, to) {
   for (const key in from) {
-    if (from[key] !== null && typeof from[key] === 'object') {
+    if (from[key] !== null && typeof from[key] === "object") {
       copyDefaults(from[key], to[key] || (to[key] = {}));
       continue;
     }
@@ -57,7 +57,7 @@ function copyDefaults(from, to) {
 function save() {
   observers.forEach(callback => callback(oldSettings));
   oldSettings = { ...settings };
-  localStorage.setItem('jse-settings', JSON.stringify(this));
+  localStorage.setItem("jse-settings", JSON.stringify(this));
 }
 
 // Simple way to observe when settings are saved
