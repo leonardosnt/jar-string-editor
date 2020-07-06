@@ -27,6 +27,7 @@ export default class FileSelector extends Component {
   state = {
     status: 'SELECT',
   };
+  dropzoneRef = React.createRef();
 
   renderDropzone = ({ acceptedFiles, rejectedFiles }) => {
     let { status } = this.state;
@@ -89,6 +90,14 @@ export default class FileSelector extends Component {
     }
   };
 
+  onKeyPress = (e) => {
+    if (e.key === 'Enter' || e.key === " " || e.key === "Spacebar") {
+      // Kinda hack but it works.
+      // TODO: Maybe update react-dropzone to use it's new api?
+      this.dropzoneRef.current.onClick(e);
+    }
+  };
+
   render() {
     const dropzoneProps = {
       // Remove styles from Dropzone
@@ -101,11 +110,13 @@ export default class FileSelector extends Component {
       multiple: false,
       accept: '.jar',
       className: 'drag-area',
+      tabIndex: 1,
+      onKeyPress: this.onKeyPress
     };
 
     return (
       <div className="file-selector">
-        <Dropzone {...dropzoneProps}>{this.renderDropzone}</Dropzone>
+        <Dropzone ref={this.dropzoneRef} {...dropzoneProps}>{this.renderDropzone}</Dropzone>
       </div>
     );
   }

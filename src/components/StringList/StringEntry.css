@@ -5,7 +5,7 @@
 
 @media (min-width: 300px) and (max-width: 800px) {
   .string-entry {
-    margin: 0 10px 0 10px;
+    margin: 0 10px 1.5px 10px;
   }
 }
 
@@ -36,7 +36,7 @@ input.string-input {
   white-space: nowrap;
   overflow: hidden;
 }
-.string-entry input.string-input:focus {
+.string-entry .string-input:focus {
   outline: none;
   border: 1px solid rgba(0, 0, 0, .7);
 }
@@ -52,9 +52,18 @@ input.string-input {
   background: rgba(13, 13, 14, 0.07);
 }
 
+body.using-mouse .string-entry .string-info:focus {
+  outline: none;
+}
+
+body:not(.using-mouse) .string-entry .string-info:focus {
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, .8);
+  background: rgba(13, 13, 14, 0.10);
+}
+
 .string-entry .string-info-tooltip {
   position: absolute;
-  display: none;
   background: white;
   border-left: 1px solid rgb(206, 206, 207);
   box-shadow: 0 2px 6px 0 rgba(13, 13, 14, 0.2);
@@ -63,6 +72,11 @@ input.string-input {
   right: 0;
   margin-right: 26px;
   min-width: 350px;
+
+  visibility: hidden;
+  opacity: 0;
+
+  transition: opacity 0.15s, visibility 0.2s;
 }
 .string-entry .string-info-tooltip span {
   width: max-content;
@@ -70,12 +84,12 @@ input.string-input {
   max-width: 80vw;
 }
 
-.string-entry .string-info-tooltip:hover {
+.string-entry .string-info-tooltip:hover,
+.string-entry .string-info:hover .string-info-tooltip,
+body:not(.using-mouse) .string-entry .string-info:focus-within .string-info-tooltip {
   display: block;
-}
-
-.string-entry .string-info:hover .string-info-tooltip {
-  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .string-entry .string-info-tooltip span {

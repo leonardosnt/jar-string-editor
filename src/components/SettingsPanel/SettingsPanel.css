@@ -3,6 +3,11 @@
   transform: translateX(100%);
 }
 
+.settings-container .sidebar.hidden * {
+  visibility: hidden;
+  transition: visibility 0.4s
+}
+
 .settings-container .sidebar .actions .done-btn {
   position: fixed;
   bottom: 14px;
@@ -38,6 +43,8 @@
 
 .settings-container .sidebar .settings-wrapper {
   margin: 40px;
+
+  visibility: visible;
 }
 
 .settings-container .toggle-icon {
@@ -50,8 +57,15 @@
   z-index: 10000;
 }
 
-.settings-container .toggle-icon:hover {
+body.using-mouse .settings-container .toggle-icon:focus {
+  outline: none;
+}
+
+.settings-container .toggle-icon:hover,
+body:not(.using-mouse) .settings-container .toggle-icon:focus {
+  outline: none;
   background: rgba(215, 215, 219, 0.6);
+  border-radius: 3px;
 }
 
 .settings-wrapper section {

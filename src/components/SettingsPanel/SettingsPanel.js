@@ -90,6 +90,12 @@ export default class SettingsPanel extends Component {
     this._removeClickOutsideListener();
   };
 
+  onKeyPress = (e) => {
+    if (e.key === 'Enter' || e.key === " " || e.key === "Spacebar") {
+      this.toggle();
+    }
+  };
+
   render() {
     const { hidden } = this.state;
 
@@ -101,7 +107,7 @@ export default class SettingsPanel extends Component {
 
     return (
       <div className="settings-container">
-        <span onClick={this.toggle} className="toggle-icon">
+        <span onClick={this.toggle} onKeyPress={this.onKeyPress} className="toggle-icon" tabIndex="2">
           {settingsToggleIcon}
         </span>
 
@@ -131,14 +137,13 @@ export default class SettingsPanel extends Component {
   }
 
   _onClickOutside = e => {
-    for (const element of e.path) {
-      if (
-        element.className === 'settings-container' ||
-        element.className === 'settings-wrapper'
-      )
-        return;
-    }
-    this.hide();
+    const path = e.path || (e.composedPath && e.composedPath());
+
+    // If no path, just don't do anything... (Should not happen)
+    if (!path) return;
+
+    const clickedInside = path.find(e => e.className === 'settings-container');
+    if (!clickedInside) this.hide();
   };
 
   _removeClickOutsideListener = () => {
