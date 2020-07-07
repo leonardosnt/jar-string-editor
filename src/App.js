@@ -17,7 +17,6 @@
 */
 
 import React, { Component } from "react";
-import update from "react-addons-update";
 import debounce from "lodash.debounce";
 import JSZip from "jszip";
 
@@ -42,16 +41,14 @@ import CoffeIcon from "./icons/coffee";
 import "./App.css";
 
 class App extends Component {
-  static INITIAL_CONTEXT = Object.freeze({
+  static INITIAL_STATE = Object.freeze({
     loadedJar: undefined,
     selectedFileName: undefined,
     strings: [],
     filter: undefined,
   });
 
-  state = {
-    context: { ...App.INITIAL_CONTEXT },
-  };
+  state = { ...App.INITIAL_STATE }
 
   constructor(props) {
     super(props);
@@ -68,13 +65,7 @@ class App extends Component {
     // Update when settings change
     Settings.observe(oldSettings => {
       if (oldSettings.sortByContext !== Settings.sortByContext) {
-        this.setState(state =>
-          update(state, {
-            context: {
-              strings: { $set: this._sortByContext(state.context.strings) },
-            },
-          })
-        );
+        this.setState(state => ({ strings: this._sortByContext(state.context.strings) }));
         return;
       }
 
@@ -90,18 +81,18 @@ class App extends Component {
     this.selectedFile = undefined;
     this.jdecWindow = undefined;
 
-    this.setState({ context: { ...App.INITIAL_CONTEXT } });
+    this.setState(App.INITIAL_STATE);
   };
 
   onSaveFile = ({ target }) => {
-    const { context } = this.state;
+    const {loadedJar, strings, selectedFileName} = this.state;
 
     // Disable button while saving
     target.disabled = true;
 
-    StringWriter.write(context.loadedJar, context.strings)
+    StringWriter.write(loadedJar, strings)
       .then(blob => {
-        saveAs(blob, context.selectedFileName || "Translated.jar");
+        saveAs(blob, selectedFileName || "Translated.jar");
       })
       .then(() => (target.disabled = false));
 
@@ -115,21 +106,15 @@ class App extends Component {
     // Used to stop the current search if needed.
     this.currentStringSearcher = stringSearcher;
 
-    this.setState(state =>
-      update(state, {
-        loadInfo: {
-          $set: translate("app.collecting_strings", {
-            progress: 0,
-            numDone: 0,
-            numClasses,
-          }),
-        },
-        context: {
-          loadedJar: { $set: jar },
-          selectedFileName: { $set: selectedFileName },
-        },
-      })
-    );
+    this.setState({
+      loadInfo: translate("app.collecting_strings", {
+        progress: 0,
+        numDone: 0,
+        numClasses,
+      }),
+      loadedJar: jar,
+      selectedFileName: selectedFileName,
+    });
 
     stringSearcher.on("read_count", numDone => {
       this.setState({
@@ -189,14 +174,7 @@ class App extends Component {
       this._sortByContext(stringsFound);
     }
 
-    this.setState(state =>
-      update(state, {
-        loadInfo: { $set: undefined },
-        context: {
-          strings: { $set: stringsFound },
-        },
-      })
-    );
+    this.setState({ loadInfo: undefined, strings: stringsFound });
   };
 
   onFileSelected = file => {
@@ -209,9 +187,7 @@ class App extends Component {
   };
 
   onSearchChange = ({ target }) => {
-    this.setState(state =>
-      update(state, { context: { filter: { $set: target.value } } })
-    );
+    this.setState({ filter: target.value });
   };
 
   onStringChanged = (newValue, stringId) => {
@@ -224,23 +200,23 @@ class App extends Component {
   };
 
   filterStrings = () => {
-    const { context } = this.state;
+    const {strings, filter} = this.state;
     const filtered = [];
 
     const filterStart = performance.now();
 
-    for (const string of context.strings) {
+    for (const string of strings) {
       const { value } = string;
 
       if (Settings.hideEmptyStrings && !value.trim().length) continue;
 
       // No filter is applied
-      if (!context.filter) {
+      if (!filter) {
         filtered.push(string);
         continue;
       }
 
-      const words = context.filter.split(" ");
+      const words = filter.split(" ");
       const foundAllWords = !words.find(w => !stringContains(value, w));
 
       if (foundAllWords) {
@@ -301,9 +277,9 @@ class App extends Component {
   );
 
   render() {
-    const { loadInfo, context } = this.state;
+    const { loadInfo, loadedJar, strings } = this.state;
 
-    if (context.loadedJar === undefined) {
+    if (loadedJar === undefined) {
       return this.renderAppContainer(
         <div>
           <FileSelector onSelected={this.onFileSelected} />
@@ -334,7 +310,7 @@ class App extends Component {
             <span>
               {translate("app.strings_info", {
                 took: took.toFixed(2),
-                found: context.strings.length,
+                found: strings.length,
                 after_filter: filtered.length,
               })}
             </span>
