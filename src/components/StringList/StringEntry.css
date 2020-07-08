@@ -1,11 +1,11 @@
 .string-entry {
   display: flex;
-  margin: 0 50px 1.5px 50px;
+  margin: 0 50px 1px 50px;
 }
 
 @media (min-width: 300px) and (max-width: 800px) {
   .string-entry {
-    margin: 0 10px 1.5px 10px;
+    margin: 0 10px 1px 10px;
   }
 }
 
@@ -20,14 +20,13 @@ input.string-input {
   padding: 0px;
 }
 
-.strings-container .strings div.string-input {
-  cursor: pointer;
+.string-entry .string-input {
+  cursor: text;
 }
 
 .string-entry .string-input {
   flex: 1;
 
-  height: 20px;
   padding: 2px;
   font-size: 1em;
   border: 1px solid rgba(0, 0, 0, .3);
