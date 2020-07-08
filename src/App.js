@@ -65,7 +65,7 @@ class App extends Component {
     // Update when settings change
     Settings.observe(oldSettings => {
       if (oldSettings.sortByContext !== Settings.sortByContext) {
-        this.setState(state => ({ strings: this._sortByContext(state.context.strings) }));
+        this.setState(state => ({ strings: this._sortByContext(state.strings) }));
         return;
       }
 
@@ -191,7 +191,7 @@ class App extends Component {
   };
 
   onStringChanged = (newValue, stringId) => {
-    const string = this.state.context.strings.find(s => s.id === stringId);
+    const string = this.state.strings.find(s => s.id === stringId);
 
     if (newValue !== string.value) {
       string.value = newValue;
