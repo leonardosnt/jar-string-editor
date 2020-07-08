@@ -25,6 +25,7 @@ import SettingsOpenIcon from "../../icons/settings-open";
 import SettingsCloseIcon from "../../icons/settings-close";
 import CheckboxOption from "./CheckboxOption";
 import SelectorOption from "./SelectorOption";
+import InputOption from "./InputOption";
 import { Button } from "../";
 
 import "./SettingsPanel.css";
@@ -57,6 +58,19 @@ const LanguageSelectorOption = () => (
     defaultValue={getCurrentLanguage()}
     persistTo={settings}
     persistKey={"language"}
+  />
+);
+
+const DebounceRateOption = () => (
+  <InputOption
+    persistTo={settings}
+    persistKey="debounceRate"
+
+    label={translate("settings.debounce_rate")}
+    style={{ width: "40px" }}
+    type="number"
+    min="0"
+    max="500"
   />
 );
 
@@ -120,6 +134,8 @@ export default class SettingsPanel extends Component {
             <HideEmptyStringsOption />
             <hr />
             <LanguageSelectorOption />
+            <hr />
+            <DebounceRateOption />
             <hr />
 
             <h5>{translate("settings.bukkit_specific")}</h5>

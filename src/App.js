@@ -53,20 +53,26 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    const debounced = debounce(
-      this.onSearchChange.bind(this),
-      Settings.debounceRate
-    );
-    this.onSearchChange = e => {
-      e.persist();
-      return debounced(e);
+    const setupSearchDebounce = () => {
+      if (this.debouncedOnSearchChange) {
+        this.debouncedOnSearchChange.cancel();
+      }
+
+      this.debouncedOnSearchChange = debounce(
+        filter => this.setState({ filter }),
+        Number(Settings.debounceRate)
+      );
     };
+
+    setupSearchDebounce();
 
     // Update when settings change
     Settings.observe(oldSettings => {
       if (oldSettings.sortByContext !== Settings.sortByContext) {
         this.setState(state => ({ strings: this._sortByContext(state.strings) }));
-        return;
+      }
+      if (oldSettings.debounceRate !== Settings.debounceRate) {
+        setupSearchDebounce();
       }
 
       this.forceUpdate();
@@ -186,8 +192,12 @@ class App extends Component {
     return JSZip.loadAsync(file).then(jar => this.onJarLoaded(jar, file.name));
   };
 
-  onSearchChange = ({ target }) => {
-    this.setState({ filter: target.value });
+  onSearchChange = (e) => {
+    if (this.debouncedOnSearchChange) {
+      this.debouncedOnSearchChange(e.target.value);
+    } else {
+      this.setState({ filter: e.target.value });
+    }
   };
 
   onStringChanged = (newValue, stringId) => {

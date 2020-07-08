@@ -19,7 +19,7 @@
 const DEFAULT_SETTINGS = {
   hideEmptyStrings: true,
   sortByContext: true,
-  debounceRate: 200, // Not configurable yet
+  debounceRate: 30,
 };
 
 // Load from localStorage

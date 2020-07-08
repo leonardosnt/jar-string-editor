@@ -19,7 +19,8 @@
       }
     },
     "general": "Geral",
-    "bukkit_specific": "Específico do Bukkit"
+    "bukkit_specific": "Específico do Bukkit",
+    "debounce_rate": "Taxa de atualização da pesquisa (ms)"
   },
   "app": {
     "collecting_strings": "Coletando strings... {{progress}}% ({{numDone}}/{{numClasses}} classes)",

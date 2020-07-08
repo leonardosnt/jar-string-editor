@@ -19,7 +19,8 @@
       }
     },
     "general": "General",
-    "bukkit_specific": "Bukkit-specific"
+    "bukkit_specific": "Bukkit-specific",
+    "debounce_rate": "Search refresh rate (ms)"
   },
   "app": {
     "collecting_strings": "Collecting strings... {{progress}}% ({{numDone}}/{{numClasses}} classes)",
