@@ -27,7 +27,7 @@ import {
   extractMethodInfoConstants,
   getInstructionLineNumber,
 } from "./util/util";
-import { stringContains } from "./util/string-util";
+import { escapeRegExp } from "./util/string-util";
 import { saveAs } from "file-saver";
 import { translate } from "./i18n/i18n";
 
@@ -215,15 +215,19 @@ class App extends Component {
     const words = filter.split(" ");
     const filterStart = performance.now();
 
+    // Regex pattern to match all words in any order
+    // Based on https://stackoverflow.com/a/4389683 (adapted)
+    const wordsPattern = words
+      .map(w => escapeRegExp(w))
+      .map(w => `(?=.*${w})`)
+      .join('');
+    const regex = new RegExp(`^${wordsPattern}.*$`, 'i');
+
     for (const string of strings) {
-      const { value } = string;
+      if (Settings.hideEmptyStrings && string.value.trim().length === 0) continue;
 
-      if (Settings.hideEmptyStrings && value.trim().length === 0) continue;
-
-      const foundAllWords = !words.find(w => !stringContains(value, w));
-
-      if (foundAllWords) {
-        filtered.push({ ...string, highlightWords: words });
+      if (regex.test(string.value)) {
+        filtered.push(Object.assign({ highlightWords: words }, string));
       }
     }
 
