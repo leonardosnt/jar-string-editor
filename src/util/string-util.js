@@ -16,42 +16,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/**
- * @param {string} haystack
- * @param {string} needle
- */
-export function stringContains(haystack, needle) {
-  let hay_pos = 0;
-  let need_pos = 0;
-  let eq_count = 0;
-
-  while (hay_pos < haystack.length) {
-    const hay_cur_char = haystack.charCodeAt(hay_pos++),
-      needle_cur_char = needle.charCodeAt(need_pos++);
-
-    // Ignore case
-    const case_diff =
-      hay_cur_char >= 97 && hay_cur_char <= 122
-        ? -32
-        : hay_cur_char >= 65 && hay_cur_char <= 90 ? 32 : 0;
-
-    if (
-      hay_cur_char === needle_cur_char ||
-      hay_cur_char + case_diff === needle_cur_char
-    ) {
-      eq_count++;
-    } else {
-      need_pos = 0;
-      eq_count = 0;
-    }
-    if (eq_count === needle.length) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
 export function escapeRegExp(string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
