@@ -201,22 +201,25 @@ class App extends Component {
 
   filterStrings = () => {
     const {strings, filter} = this.state;
-    const filtered = [];
 
+    if (!filter) {
+      // TODO: maybe we should filter empty strings only when they are loaded or when
+      // the settings change...
+      return ({
+        filtered: strings.filter(f => !Settings.hideEmptyStrings || f.value.trim().length > 0),
+        took: 0
+      });
+    }
+
+    const filtered = [];
+    const words = filter.split(" ");
     const filterStart = performance.now();
 
     for (const string of strings) {
       const { value } = string;
 
-      if (Settings.hideEmptyStrings && !value.trim().length) continue;
+      if (Settings.hideEmptyStrings && value.trim().length === 0) continue;
 
-      // No filter is applied
-      if (!filter) {
-        filtered.push(string);
-        continue;
-      }
-
-      const words = filter.split(" ");
       const foundAllWords = !words.find(w => !stringContains(value, w));
 
       if (foundAllWords) {
