@@ -30,12 +30,6 @@ import {
   ConstantType,
 } from "java-class-tools";
 
-/**
- * This class will emit the following events:
- *
- * - finish: when the searchInJar method finish reading all class files;
- * }
- */
 export default class StringReader {
   constructor() {
     Object.assign(this, mitt());
