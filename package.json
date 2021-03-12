@@ -46,7 +46,7 @@
     "promise": "8.0.1",
     "raf": "3.4.0",
     "react": "^16.1.1",
-    "react-dev-utils": "^4.2.1",
+    "react-dev-utils": "^11.0.4",
     "react-dom": "^16.1.1",
     "react-dropzone": "^4.2.3",
     "react-highlight-words": "^0.10.0",
